@@ -1,6 +1,78 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const pageTitle = "Home Page";
+import PhotoCarousel from '../components/PhotoCarousel';
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+const pageTitle = "Be Heard on the Hill";
 ---
 <BaseLayout pageTitle={pageTitle}>
+  <center>
+    <PhotoCarousel client:load />
+  </center>
+
+  <p>
+    Are you frustrated that your Members of Congress are refusing to hold town halls, not answering their phones, and letting voice mailboxes fill up? Do you want to make sure your Member of Congress considers your views?
+  </p>
+
+  <p>
+    Herd on the Hill volunteers visit the DC offices of your elected officials, taking you with us through your messages and calls. 
+  </p>
+
+  <center>
+    <p>
+      <a href="/letter">
+        <Button variant="destructive">Send a Letter Now With Your Photo</Button>
+      </a>
+    </p>
+  
+    <p>
+      <a href="/tips">
+        <Button variant="default">FAQs for writing letters</Button>
+      </a>
+    </p>
+  </center>
+
+  <table>
+    <tr>
+      <td>
+        <Card className="w-full max-w-xs">
+          <CardHeader>
+            <CardTitle><a href="/call">Call</a></CardTitle>
+          </CardHeader>
+          <CardContent>
+            Can't get through on your own? Request a live call in your Member of Congress’s DC office.
+          </CardContent>
+        </Card>
+      </td>
+      <td>
+        <Card className="w-full max-w-xs">
+          <CardHeader>
+            <CardTitle><a href="/visit">Vist</a></CardTitle>
+          </CardHeader>
+          <CardContent>
+            Schedule an in-person meeting with your Member of Congress if you are visiting D.C.
+          </CardContent>
+        </Card>
+      </td>
+      <td>
+        <Card className="w-full max-w-xs">
+          <CardHeader>
+            <CardTitle><a href="/contact">Customized</a></CardTitle>
+          </CardHeader>
+          <CardContent>
+            Other ways you or your group can make an impact in your Member of Congress’s DC office.
+          </CardContent>
+        </Card>
+      </td>
+    </tr>
+  </table>
 </BaseLayout>
