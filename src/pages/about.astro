@@ -1,54 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const pageTitle = "About Me";
-
-const identity = {
-  firstName: "Chris",
-  country: "US",
-  occupation: "Chaos Monkey",
-  hobbies: ["chaos", "astro", "code"],
-};
-
-const skills = ["HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
-const happy = true;
-const finished = true;
-const goal = 3;
-
-const skillColor = "navy";
+const pageTitle = "About Herd on the Hill";
 ---
 <BaseLayout pageTitle={pageTitle}>
-  <h2>... and my new Astro site!</h2>
+  
+<p>Since the inauguration of Donald Trump, millions of citizens have been trying to access their Members of Congress through the usual methods: phone calls, letters, district office visits, and town halls. “Trying? is the operative word: every day we hear from countless folks that their members' phone lines are jammed, voice mail boxes full, office doors locked and town halls gone unscheduled, cancelled, scaled back or shifted to pre-screened audiences only.
+</p>
+<p>
+<h2>That's where Herd on the Hill comes in</h2>
+We live and work near Congressional offices. We enjoy easy proximity. We cut through the barriers above by visiting members' offices on Capitol Hill to talk to these senators' and representatives' staffs on behalf of these frustrated constituents.
+</p>
+<p>
+Citizens are agitating for new ways to amplify their messages, tell their stories and request responses from their elected officials. Herd on the Hill facilitates connections between constituents and Members of Congress and their DC office staff, who handle most of the policy issues about which constituents have views.
+</p>
+<p>
+<h2>Herd on the Hill's assets</h2> 
+Herd on the Hill projects constituent speech directly and physically into congressional offices, in ways that cannot be ignored. Volunteers from The District of Columbia who work with Herd on the Hill are highly motivated, as they have no voting representation in the House or the Senate. Herd on the Hill is a way for these politically savvy and energized citizens to leverage their presence in the nation's capital.
+</p>
+<p>
+<h2>Methods</h2>
+Herd on the Hill uses the most marginally effective ways of making constituent voices heard in DC congressional offices, such as discussing constituent petitions and letters with policy staff, facilitating phone calls and video chats between constituents and policy staff, and conducting large scale campaigns designed for media impact. Herd on the Hill's methods are evolving.
+</p>
+<p>
+Herd on the Hill publicizes its efforts on social media, which shows constituents whether their elected officials are responsive to their input. It also attracts interest in our work and generally contributes to the enthusiasm for political advocacy.
 
-  <p>I am working through Astro's introductory tutorial. This is the second page on my website, and it's the first one I built myself!</p>
-
-  <p>This site will update as I complete more of the tutorial, so keep checking back and see how my journey is going!</p>
-  <p>Here are a few facts about me:</p>
-  <ul>
-    <li>My name is {identity.firstName}.</li>
-    <li>I live in {identity.country} and I work as a {identity.occupation}.</li>
-    {identity.hobbies.length >= 2 &&
-      <li>Two of my hobbies are: {identity.hobbies[0]} and {identity.hobbies[1]}</li>
-    }
-  </ul>
-  <p>My skills are:</p>
-  <ul>
-    {skills.map((skill) => <li class="skill">{skill}</li>)}
-  </ul>
-
-  {happy && <p>I am happy to be learning Astro!</p>}
-
-  {finished && <p>I finished this tutorial!</p>}
-
-  {goal === 3 ? <p>My goal is to finish in 3 days.</p> : <p>My goal is not 3 days.</p>}
-
-  <style is:global define:vars={{skillColor}}>
-      h1 {
-        color: purple;
-        font-size: 4rem;
-      }
-      .skill {
-      color: var(--skillColor);
-      font-weight: bold;
-      }
-  </style>
 </BaseLayout>

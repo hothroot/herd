@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const pageTitle = "Donate";
+---
+<BaseLayout pageTitle={pageTitle}>
+
+    <p>Herd on the Hill volunteers are working for free.</p>
+
+    <p>Your donation will give us the capacity to help more people reach their Members of Congress in Washington by covering administrative, technology, and legal costs.</p>
+
+    <p>Any contribution makes a difference. Thank you.</p>
+
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_s-xclick">
+        <input type="hidden" name="hosted_button_id" value="VCLWWSYFMNPM4">
+        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+             border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+        <img alt="" border="0" src="" data-recalc-dims="1">
+    </form>
+
+    <p>Donations not tax deductible</p>
+
+</BaseLayout>
