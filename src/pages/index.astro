@@ -40,39 +40,31 @@ const pageTitle = "Be Heard on the Hill";
       </a>
     </p>
   </center>
-
-  <table>
-    <tr>
-      <td>
-        <Card className="w-full max-w-xs">
-          <CardHeader>
-            <CardTitle><a href="/call">Call</a></CardTitle>
-          </CardHeader>
-          <CardContent>
-            Can't get through on your own? Request a live call in your Member of Congress’s DC office.
-          </CardContent>
-        </Card>
-      </td>
-      <td>
-        <Card className="w-full max-w-xs">
-          <CardHeader>
-            <CardTitle><a href="/visit">Vist</a></CardTitle>
-          </CardHeader>
-          <CardContent>
-            Schedule an in-person meeting with your Member of Congress if you are visiting D.C.
-          </CardContent>
-        </Card>
-      </td>
-      <td>
-        <Card className="w-full max-w-xs">
-          <CardHeader>
-            <CardTitle><a href="/contact">Customized</a></CardTitle>
-          </CardHeader>
-          <CardContent>
-            Other ways you or your group can make an impact in your Member of Congress’s DC office.
-          </CardContent>
-        </Card>
-      </td>
-    </tr>
-  </table>
+  
+  <div class="flex md:flex-row flex-col">
+    <Card className="w-full md:w-auto">
+      <CardHeader>
+        <CardTitle><a href="/call">Call</a></CardTitle>
+      </CardHeader>
+      <CardContent>
+        Can't get through on your own? Request a live call in your Member of Congress’s DC office.
+      </CardContent>
+    </Card>
+    <Card className="w-full md:w-auto">
+      <CardHeader>
+        <CardTitle><a href="/visit">Vist</a></CardTitle>
+      </CardHeader>
+      <CardContent>
+        Schedule an in-person meeting with your Member of Congress if you are visiting D.C.
+      </CardContent>
+    </Card>
+    <Card className="w-full md:w-auto">
+      <CardHeader>
+        <CardTitle><a href="/contact">Customized</a></CardTitle>
+      </CardHeader>
+      <CardContent>
+        Other ways you or your group can make an impact in your Member of Congress’s DC office.
+      </CardContent>
+    </Card>
+  </div>
 </BaseLayout>

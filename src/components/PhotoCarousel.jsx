@@ -21,8 +21,8 @@ const PhotoCarousel = () => {
             <img src="/home-carousel-4.jpg"></img>
         </CarouselItem>
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="relative left-0 translate-x-0"/>
+      <CarouselNext className="relative left-0 translate-x-0"/>
     </Carousel>
   );
 };
