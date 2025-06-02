@@ -125,6 +125,11 @@ h1 {
   }
 }
 
+.callout {
+    padding: 2em;
+    font-weight: bold;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
