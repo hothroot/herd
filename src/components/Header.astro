@@ -1,13 +1,10 @@
 ---
+import DevBanner from './DevBanner';
 import Hamburger from './Hamburger.astro';
 import Navigation from './Navigation.astro';
 ---
-
 <header>
-    <div class="butterbar">
-        This site is under development,
-        please visit <a href="https://herdonthehill.org/">instead</a>. 
-    </div>
+    <DevBanner />
     <nav>
         <Hamburger />
         <div>
@@ -18,12 +15,3 @@ import Navigation from './Navigation.astro';
         <Navigation />
     </nav>
 </header>
-
-<style>
-    .butterbar {
-        width: 100%;
-        background: #ddd84b;
-        text-align: center;
-        padding: 1em;
-    }
-</style>

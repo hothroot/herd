@@ -245,3 +245,17 @@ h1 {
     @apply bg-background text-foreground;
   }
 }
+
+#butterbar {
+    width: 100%;
+    background: #ddd84b;
+    text-align: center;
+    padding: 1em;
+}
+#bloodbar {
+    width: 100%;
+    background: #df1b1b;
+    color: white;
+    text-align: center;
+    padding: 0.25em;
+}
