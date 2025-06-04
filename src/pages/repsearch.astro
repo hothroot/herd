@@ -1,8 +1,11 @@
 ---
 export const prerender = false;
 
+import { isDirty } from 'astro:schema';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ok from "@/scripts/devdata"
 
+const isDev = import.meta.env.DEV;
 const apiKey = import.meta.env.FIVECALLS_API;
 const pageTitle = "Your Senators";
 
@@ -11,19 +14,24 @@ const q = Object.fromEntries(queryUrl.searchParams);
 
 const location = encodeURIComponent(`${q.street} ${q.city} ${q.state} ${q.zipcode}`);
 const searchUrl = `https://api.5calls.org/v1/representatives?location=${location}`;
-const response = await fetch(searchUrl, {
-    method: 'GET',
-    headers: {
-        'X-5Calls-Token': apiKey,
-    },
-});
-if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+var data;
+if (isDev) {
+    console.log('using ok dev data');
+    data = ok;
+} else {
+    console.log('fetching real data');
+    const response = await fetch(searchUrl, {
+        method: 'GET',
+        headers: {
+            'X-5Calls-Token': apiKey,
+        },
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    data = await response.json();
 }
-const data = await response.json();
-
 const representatives = data['representatives'].filter((rep:any) => rep['area'] === 'US Senate')
-console.log(representatives)
 ---
 
 <BaseLayout pageTitle={pageTitle}>
