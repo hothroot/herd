@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AddressForm from '../components/AddressForm';
+const pageTitle = "Send a Letter";
+---
+<BaseLayout pageTitle={pageTitle}>
+    <AddressForm client:load/>
+</BaseLayout>
