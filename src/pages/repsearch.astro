@@ -1,0 +1,57 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const apiKey = import.meta.env.FIVECALLS_API;
+const pageTitle = "Your Senators";
+
+const queryUrl = new URL(Astro.request.url);
+const q = Object.fromEntries(queryUrl.searchParams);
+
+const location = encodeURIComponent(`${q.street} ${q.city} ${q.state} ${q.zipcode}`);
+const searchUrl = `https://api.5calls.org/v1/representatives?location=${location}`;
+const response = await fetch(searchUrl, {
+    method: 'GET',
+    headers: {
+        'X-5Calls-Token': apiKey,
+    },
+});
+if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+}
+const data = await response.json();
+
+const representatives = data['representatives'].filter((rep:any) => rep['area'] === 'US Senate')
+console.log(representatives)
+---
+
+<BaseLayout pageTitle={pageTitle}>
+    <h2>Your Query</h2>
+    <ul> 
+        <li>
+            {q.name}
+        </li>
+        <li>
+            {q.street}
+        </li>
+        <li>
+            {q.city}
+        </li>
+        <li>
+            {q.state}
+        </li>
+        <li>
+            {q.zipcode}
+        </li>
+    </ul>
+    <h2>Your Result</h2>
+    <ul>
+        {representatives.map((rep: any) => 
+            <li>
+                <img src={rep['photoURL']} />
+                {rep["name"]}
+            </li>
+        )}
+    </ul>
+</BaseLayout>

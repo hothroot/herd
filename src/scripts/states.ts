@@ -1,4 +1,4 @@
-const states = {
+const states: Record<string, Record<string, string>>= {
     'AL': {'name': 'Alabama', 'type': 'state'},
     'AK': {'name': 'Alaska', 'type': 'state'},
     'AZ': {'name': 'Arizona', 'type': 'state'},

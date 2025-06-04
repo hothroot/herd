@@ -14,7 +14,8 @@ export default defineConfig({
   },
   env: {
     schema: {
-      STAGING: envField.boolean({ context: "server", access:"public", default: false })
+      STAGING: envField.boolean({ context: "server", access:"public", default: false }),
+      FIVECALLS_API: envField.string({ context: "server", access:"secret" }),
     }
   },
 });
