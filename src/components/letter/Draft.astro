@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const { address, representatives } = Astro.props;
+const pageTitle = "Your Senators";
+---
+<BaseLayout pageTitle={pageTitle}>
+    <h2>Your Query</h2>
+    <ul> 
+        <li>
+            {address.name}
+        </li>
+        <li>
+            {address.street}
+        </li>
+        <li>
+            {address.city}
+        </li>
+        <li>
+            {address.state}
+        </li>
+        <li>
+            {address.zipcode}
+        </li>
+    </ul>
+    <h2>Your Result</h2>
+    <ul>
+        {representatives.map((rep: any) => 
+            <li>
+                <img src={rep['photoURL']} />
+                {rep["name"]}
+            </li>
+        )}
+    </ul>
+</BaseLayout>

@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DistrictError from './errors/DistrictError.astro';
+import MilitaryError from './errors/MilitaryError.astro';
+import StateError from './errors/StateError.astro';
+import TerritoryError from './errors/TerritoryError.astro';
+
+import { states, stateDecoder } from "@/scripts/states"
+
+const { address } = Astro.props;
+const code = stateDecoder(address.state);
+const statep = states[code]['type'] === 'state';
+const dcp = code == "DC";
+const milp = states[code]['type'] === 'military';
+const territoryp = !statep && !milp && !dcp;
+const pageTitle = "Oops";
+---
+<BaseLayout pageTitle={pageTitle}>
+    We could not find a legislator for your query:
+    <ul> 
+        <li>
+            {address.street}
+        </li>
+        <li>
+            {address.city}
+        </li>
+        <li>
+            {address.state}
+        </li>
+        <li>
+            {address.zipcode}
+        </li>
+    </ul>
+
+    { statep && <StateError />}
+    { territoryp && <TerritoryError />}
+    { dcp && <DistrictError />}
+    { milp && <MilitaryError />}
+</BaseLayout>

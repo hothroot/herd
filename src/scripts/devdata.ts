@@ -1,4 +1,4 @@
-const ok: Record<string, any> = {
+const okData: Record<string, any> = {
     'location': 'Arlington',
     'lowAccuracy': 'false',
     'isSplit': 'false',
@@ -66,4 +66,4 @@ const ok: Record<string, any> = {
         },
     ]
 }
-export default ok;
+export default okData;

@@ -1,4 +1,4 @@
-const states: Record<string, Record<string, string>>= {
+export const states: Record<string, Record<string, string>>= {
     'AL': {'name': 'Alabama', 'type': 'state'},
     'AK': {'name': 'Alaska', 'type': 'state'},
     'AZ': {'name': 'Arizona', 'type': 'state'},
@@ -73,4 +73,21 @@ const states: Record<string, Record<string, string>>= {
     'AP': {'name': 'U.S. Armed Forces – Pacific', 'type': 'military'},
 };
 
-export default states;
+function invert(s: Record<string, Record<string, string>>) {
+  const inverted: Record<string, string> = {};
+  for (const code in s) {
+    if (s.hasOwnProperty(code)) {
+        var name: string = s[code]["name"];
+      inverted[name] = code
+    }
+  }
+  return inverted;
+}
+
+const decoder = invert(states);
+export function stateDecoder(probe: string) {
+    if (states.hasOwnProperty(probe)) {
+        return probe;
+    }
+    return decoder[probe];
+}

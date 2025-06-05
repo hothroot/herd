@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import states from "@/scripts/states"
+import { states } from "@/scripts/states"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -49,14 +49,13 @@ export default function AddressForm() {
 
   function onSubmit(data: z.infer<typeof AddressSchema>) {
     const url = (
-      '/repsearch?'
+      '/search?'
       + `name=${data['name']}&`  // I hate typescript
       + `street=${data['street']}&`
       + `city=${data['city']}&`
       + `state=${data['state']}&`
       + `zipcode=${data['zipcode']}`
-    );  
-    console.log(url)
+    ); 
     window.location.href = url;
   }
 
