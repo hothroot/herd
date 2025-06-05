@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import Draft from '../components/letter/Draft.astro';
-import NotFound from '../components/letter/NotFound.astro';
+import NotFound from '../components/letter/error/NotFound.astro';
 
 import okData from "@/scripts/devdata"
 
@@ -45,7 +45,13 @@ const representatives = (
     'representatives' in data
     ? data['representatives'].filter((rep:any) => rep['area'] === 'US Senate') 
     : []);
+console.log(representatives);
+if (representatives.length == 0) {
+    ok = false;
+}
 ---
 
-{ok && <Draft address={address} representatives={representatives} />}
-{!ok && <NotFound address={address} />}
+{ok 
+  ? <Draft address={address} representatives={representatives} />
+  : <NotFound address={address} />
+}
