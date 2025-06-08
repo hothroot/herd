@@ -47,21 +47,9 @@ export default function AddressForm() {
     },
   })
 
-  function onSubmit(data: z.infer<typeof AddressSchema>) {
-    const url = (
-      '/search?'
-      + `name=${data['name']}&`  // I hate typescript
-      + `street=${data['street']}&`
-      + `city=${data['city']}&`
-      + `state=${data['state']}&`
-      + `zipcode=${data['zipcode']}`
-    ); 
-    window.location.href = url;
-  }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form method="POST" className="w-2/3 space-y-6">
         <FormField
           control={form.control}
           name="name"

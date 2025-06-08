@@ -1,8 +1,47 @@
 ---
+export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AddressForm from '../components/letter/AddressForm';
+import Draft from '../components/letter/Draft.astro';
+import { type Address, type Reps } from '@/scripts/letter_state.js';
+import searchReps from '@/scripts/search';
+
 const pageTitle = "Send a Letter";
+
+var address: Address = {};
+var reps: Reps = [];
+var isGet = true;
+var isDraft = false;
+var isDone = false;
+
+function formToString(value: FormDataEntryValue | null) {
+    if (value === null) {
+        return "";
+    }
+    if (typeof value === 'string') {
+        return value;
+    }
+    return "";
+}
+
+if (Astro.request.method === 'POST') {
+    isGet = false;
+    const formData = await Astro.request.formData();
+    address["name"] = formToString(formData.get("name"));
+    address["street"] = formToString(formData.get("street"));
+    address["city"] = formToString(formData.get("city"));
+    address["state"] = formToString(formData.get("state"));
+    address["zipcode"] = formToString(formData.get("zipcode"));
+    if (formData.has("message")) {
+       isDone = true; 
+    } else {
+        const reps = searchReps(address);
+        isDraft = true;
+    }
+}
 ---
 <BaseLayout pageTitle={pageTitle}>
-    <AddressForm client:load/>
+    {isGet   && <AddressForm client:load /> }
+    {isDraft && <Draft address={address} reps={reps} client:load /> } 
+    {isDone  && <p>good job!</p> }
 </BaseLayout>
