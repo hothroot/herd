@@ -23,7 +23,7 @@ const StateSchema =
   z.string()
   .refine(
       (state) => allStates.includes(state.toUpperCase()),
-      `Name must be one of ["${allStates.join('", "')}"]`
+      `State must be a two-letter postal code or the full state name`
     );
 const AddressSchema = z.object({
   name: z.string().min(1, {
@@ -32,12 +32,13 @@ const AddressSchema = z.object({
   street: z.string(),
   city: z.string(),
   state: StateSchema,
-  zipcode: z.string(),
+  zipcode: z.string().regex(/(^\d{5}$)|(^\d{5}-\d{4}$)/),
 });
 
 export default function AddressForm() {
   const form = useForm<z.infer<typeof AddressSchema>>({
     resolver: zodResolver(AddressSchema),
+    mode: 'all',
     defaultValues: {
       name: "",
       street: "",

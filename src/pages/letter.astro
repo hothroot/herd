@@ -2,9 +2,10 @@
 export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AddressForm from '../components/letter/AddressForm';
-import Draft from '../components/letter/Draft.astro';
+import Draft from '../components/letter/Draft';
 import { type Address, type Reps } from '@/scripts/letter_state.js';
 import searchReps from '@/scripts/search';
+import letterToPdf from '@/scripts/letter_format.js';
 
 const pageTitle = "Send a Letter";
 
@@ -33,9 +34,23 @@ if (Astro.request.method === 'POST') {
     address["state"] = formToString(formData.get("state"));
     address["zipcode"] = formToString(formData.get("zipcode"));
     if (formData.has("message")) {
-       isDone = true; 
+        const today = formToString(formData.get("today"));
+        const message = formToString(formData.get("message"));
+        const senator0 = formToString(formData.get("senator0"));
+        const senator1 = formToString(formData.get("senator1"));
+        if (senator0 !== "") {
+            reps[0] = { "name" : senator0 };
+        } else {
+            // error
+        }
+        if (senator1 !== "") {
+            reps[1] = { "name" : senator1 };
+        } 
+        letterToPdf(address, reps, today, message);
+        isDone = true; 
     } else {
-        const reps = searchReps(address);
+        reps = await searchReps(address);
+        console.log(reps);
         isDraft = true;
     }
 }
