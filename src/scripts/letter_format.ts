@@ -7,6 +7,7 @@ export default function letterToPdf(address: Address, reps: Reps, today: string,
     const postalCode = stateDecoder(address.state);
     const senator = reps[0].name;
     const messageClean = message.replaceAll('\r', '');
+    const margin = 72;
 
     const doc = new PDFDocument({
         size: 'LETTER',
@@ -14,30 +15,45 @@ export default function letterToPdf(address: Address, reps: Reps, today: string,
         info: {
             'Title': `a constituent letter for ${reps[0].name}`,
             'Subject': `authored by ${address['name']} using HerdOnTheHill.org`,
-        }
+        },
+        margin: margin,
     });
 
     // TODO
     doc.pipe(fs.createWriteStream('output.pdf'));
-
+    
     doc.fontSize(14);
     doc.moveDown(2.0);
+
+    let line1 = address.name;
+    let line2 = address.street;
+    let line3 = `${address.city}, ${postalCode}, ${address.zipcode}`;
+    let addressWidth = Math.max(
+        doc.widthOfString(line1),
+        doc.widthOfString(line2),
+        doc.widthOfString(line3),
+    );
+    let addressIndent = doc.page.width - 2 * margin - addressWidth - 5;
+
     doc.text(
-        (
-            `${address.name}\n` +
-            `${address.street}\n` +
-            `${address.city}, ${postalCode}, ${address.zipcode}`
-        ),
+        `${line1}\n${line2}\n${line3}`,
         {
-            indent: 250,
+            indent: addressIndent,
             indentAll: true,
-        });
-    doc.moveDown(4.0);
+        }
+    );
+    doc.moveDown(2.0);
 
     doc.text(today);
-    doc.moveDown(4.0);
+    doc.moveDown(2.0);
+    doc.text(
+        `The Honorable ${senator}\n` +
+        `United States Senate\n` +
+        `Washington, D.C. 20510`
+        );
+    doc.moveDown(2.0);
 
-    doc.text(`The Honorable ${senator},`); doc.moveDown();
+    doc.text(`Dear Senator ${senator},`); doc.moveDown();
 
     doc.text(messageClean); doc.moveDown();
 
