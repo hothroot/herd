@@ -1,4 +1,6 @@
-export const states: Record<string, Record<string, string>>= {
+export type StateList = Record<string, Record<string, string>>;
+export type CodeList = Record<string, string>;
+export const states: StateList = {
     'AL': {'name': 'Alabama', 'type': 'state'},
     'AK': {'name': 'Alaska', 'type': 'state'},
     'AZ': {'name': 'Arizona', 'type': 'state'},
@@ -69,11 +71,11 @@ export const states: Record<string, Record<string, string>>= {
     'FM': {'name': 'Micronesia', 'type': 'free'},
     'PW': {'name': 'Palau', 'type': 'free'},
     'AA': {'name': 'U.S. Armed Forces - America', 'type': 'military'},
-    'AE': {'name': 'U.S. Armed Forces – Europe', 'type': 'military'},
-    'AP': {'name': 'U.S. Armed Forces – Pacific', 'type': 'military'},
+    'AE': {'name': 'U.S. Armed Forces - Europe', 'type': 'military'},
+    'AP': {'name': 'U.S. Armed Forces - Pacific', 'type': 'military'},
 };
 
-function invert(s: Record<string, Record<string, string>>) {
+function invert(s: StateList) : CodeList {
   const inverted: Record<string, string> = {};
   for (const code in s) {
     if (s.hasOwnProperty(code)) {
@@ -84,8 +86,9 @@ function invert(s: Record<string, Record<string, string>>) {
   return inverted;
 }
 
-const decoder = invert(states);
-export function stateDecoder(probe: string) {
+const decoder: CodeList = invert(states);
+
+export function stateDecoder(probe: string) : string {
     if (states.hasOwnProperty(probe)) {
         return probe;
     }
