@@ -3,15 +3,18 @@ export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AddressForm from '../components/letter/AddressForm';
 import Draft from '../components/letter/Draft';
+import Receipt from '../components/letter/Receipt.astro';
 
 import { type Address, type Reps } from '@/scripts/letter-state.js';
 import searchReps from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
+import { StorageApi } from '@/scripts/letter-store.js';
 
 const pageTitle = "Send a Letter";
 
 var address: Address = {};
 var reps: Reps = [];
+var links: Array<string> =[];
 var isGet = true;
 var isDraft = false;
 var isDone = false;
@@ -47,7 +50,14 @@ if (Astro.request.method === 'POST') {
         if (senator1 !== "") {
             reps[1] = { "name" : senator1 };
         } 
-        letterToPdf(address, reps, today, message);
+        const store = new StorageApi();
+        const letters = reps.map((rep) => {
+            return {
+                filename: `${rep.name} - ${today} - ${address.name}.pdf`,
+                data: letterToPdf(address, rep, today, message),
+            }
+        });
+        links = await store.uploadLetters(letters);
         isDone = true; 
     } else {
         reps = await searchReps(address);
@@ -59,5 +69,5 @@ if (Astro.request.method === 'POST') {
 <BaseLayout pageTitle={pageTitle}>
     {isGet   && <AddressForm client:load /> }
     {isDraft && <Draft address={address} reps={reps} client:load /> } 
-    {isDone  && <p>good job!</p> }
+    {isDone  && <Receipt links={links} /> }
 </BaseLayout>

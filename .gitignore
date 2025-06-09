@@ -25,3 +25,5 @@ pnpm-debug.log*
 .idea/
 
 output.pdf
+credentials.json
+token.json

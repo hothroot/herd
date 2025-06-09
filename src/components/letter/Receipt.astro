@@ -1,0 +1,13 @@
+---
+const { links } = Astro.props;
+---
+
+<p>
+    Thank you for writing to your senators! You can review your 
+    {links.length == 1 ? "draft" : "drafts"} here:
+
+    <ul>
+        {links.map((link: string) => <li><a href={link} target="_blank">letter</a></li>)}
+    </ul>
+
+</p>

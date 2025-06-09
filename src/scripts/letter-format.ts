@@ -1,11 +1,11 @@
 import PDFDocument from 'pdfkit';
-import fs from 'fs';
-import { type Address, type Reps } from '@/scripts/letter-state.js';
+import Stream from 'stream';
+import { type Address, type Rep } from '@/scripts/letter-state.js';
 import { stateDecoder } from `./states.ts`;
 
-export default function letterToPdf(address: Address, reps: Reps, today: string, message: string) {
+export default function letterToPdf(address: Address, rep: Rep, today: string, message: string) {
     const postalCode = stateDecoder(address.state);
-    const senator = reps[0].name;
+    const senator = rep.name;
     const messageClean = message.replaceAll('\r', '');
     const margin = 72;
 
@@ -13,14 +13,11 @@ export default function letterToPdf(address: Address, reps: Reps, today: string,
         size: 'LETTER',
         font: 'Times-Roman',
         info: {
-            'Title': `a constituent letter for ${reps[0].name}`,
+            'Title': `a constituent letter for ${rep.name}`,
             'Subject': `authored by ${address['name']} using HerdOnTheHill.org`,
         },
         margin: margin,
     });
-
-    // TODO
-    doc.pipe(fs.createWriteStream('output.pdf'));
     
     doc.fontSize(14);
     doc.moveDown(2.0);
@@ -61,4 +58,5 @@ export default function letterToPdf(address: Address, reps: Reps, today: string,
     doc.text(address.name, {indent: 250});
 
     doc.end();
+    return doc;
 };
