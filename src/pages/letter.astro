@@ -3,9 +3,10 @@ export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AddressForm from '../components/letter/AddressForm';
 import Draft from '../components/letter/Draft';
-import { type Address, type Reps } from '@/scripts/letter_state.js';
-import searchReps from '@/scripts/search';
-import letterToPdf from '@/scripts/letter_format.js';
+
+import { type Address, type Reps } from '@/scripts/letter-state.js';
+import searchReps from '@/scripts/search-reps.ts';
+import letterToPdf from '@/scripts/letter-format.js';
 
 const pageTitle = "Send a Letter";
 

@@ -2,7 +2,7 @@ import { Image } from 'astro:assets';
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 
-import { type Address, type Reps } from '@/scripts/letter_state.js';
+import { type Address, type Reps } from '@/scripts/letter-state.js';
 import profileRef from '../../assets/profile.png'; 
 
 const today = new Date().toLocaleString('default', {

@@ -1,5 +1,5 @@
-import okData from "@/scripts/devdata"
-import { type Address, type Reps } from '@/scripts/letter_state.js';
+import okData from "@/scripts/dev-data"
+import { type Address, type Reps } from '@/scripts/letter-state.js';
 
 const isDev = import.meta.env.DEV;
 const apiKey = import.meta.env.FIVECALLS_API;

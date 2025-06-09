@@ -1,7 +1,7 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
-import { type Address, type Reps } from '@/scripts/letter_state.js';
-import { stateDecoder } from `@/scripts/states.ts`;
+import { type Address, type Reps } from '@/scripts/letter-state.js';
+import { stateDecoder } from `./states.ts`;
 
 export default function letterToPdf(address: Address, reps: Reps, today: string, message: string) {
     const postalCode = stateDecoder(address.state);
