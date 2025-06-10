@@ -1,23 +1,17 @@
 import okData from "@/scripts/dev-data"
-import { type Address, type Reps } from '@/scripts/letter-state.js';
+import { type Address } from '@/scripts/letter-state.js';
 
 const isDev = import.meta.env.DEV;
 const apiKey = import.meta.env.FIVECALLS_API;
 
 export default async function searchReps (address: Address) {
-    var status = 400; 
-    var ok = false;
     var data = undefined;
     if (isDev && address["name"] !== "fetch") {
         if (address["name"] === "error") {
             console.log('using error dev data');
-            status = 400;
-            ok = false;
         } else {
             console.log('using ok dev data');
             data = okData;
-            status = 200;
-            ok = true;
         }
     } else {
         console.log('fetching real data');
@@ -29,8 +23,6 @@ export default async function searchReps (address: Address) {
                 'X-5Calls-Token': apiKey,
             },
         });
-        status = response.status;
-        ok = response.ok;
         if (response.ok) {
             data = await response.json();
         }

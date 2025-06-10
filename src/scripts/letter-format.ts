@@ -1,7 +1,6 @@
 import PDFDocument from 'pdfkit';
-import Stream from 'stream';
 import { type Address, type Rep } from '@/scripts/letter-state.js';
-import { stateDecoder } from `./states.ts`;
+import { stateDecoder } from '@/scripts//states.ts';
 
 export default function letterToPdf(address: Address, rep: Rep, today: string, message: string) {
     const postalCode = stateDecoder(address.state);
@@ -36,7 +35,6 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
         `${line1}\n${line2}\n${line3}`,
         {
             indent: addressIndent,
-            indentAll: true,
         }
     );
     doc.moveDown(2.0);

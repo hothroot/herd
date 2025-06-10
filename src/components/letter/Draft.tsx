@@ -1,4 +1,5 @@
-import { Image } from 'astro:assets';
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 

@@ -1,10 +1,5 @@
-import { authenticate } from '@google-cloud/local-auth';
 import { google } from 'googleapis';
-
-import { DRIVE_CREDENTIALS , GOOGLE_TOKEN } from "astro:env/server";
-
-// If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/drive'];
+import { GOOGLE_TOKEN } from "astro:env/server";
 
 export class StorageApi {
   constructor() {
@@ -36,16 +31,7 @@ export class StorageApi {
     if (this.client) {
       return this.client;
     }
-
-    this.client = await authenticate({
-      scopes: SCOPES,
-      keyfilePath: CREDENTIALS_PATH,
-    });
-    // sadly, we have nowhere to save them
-    // if (this.client.credentials) {
-    //   await this.saveCredentials();
-    // }
-    this.client = client;
+    throw new Error("Missing oauth token for the Google Drive API.");
   }
   
   /**
@@ -135,12 +121,12 @@ export class StorageApi {
     };
 
     try {
-      const file = await drive.files.create({
+      let file = await drive.files.create({  // @ts-ignore await definitely does have an effect here
         requestBody: fileMetadata,
         media: media,
         fields: 'id',
       });
-      const perm = await drive.permissions.create({
+      drive.permissions.create({
         fileId: file.data.id,
         requestBody: {
           type: "anyone",
