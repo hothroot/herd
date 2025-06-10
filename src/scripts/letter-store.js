@@ -18,7 +18,7 @@ export class StorageApi {
       const credentials = JSON.parse(content);
       return google.auth.fromJSON(credentials);
     } catch (err) {
-      return null;
+      throw err;
     }
   }
   
