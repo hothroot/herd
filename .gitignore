@@ -27,3 +27,4 @@ pnpm-debug.log*
 output.pdf
 credentials.json
 token.json
+.netlify

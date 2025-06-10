@@ -28,25 +28,6 @@ export class StorageApi {
   }
   
   /**
-   * Serializes credentials to a file compatible with GoogleAuth.fromJSON.
-   *
-   * @param {OAuth2Client} client
-   * @return {Promise<void>}
-   */
-  saveCredentials() {
-    const content = DRIVE_CREDENTIALS;
-    const keys = JSON.parse(content);
-    const key = keys.installed || keys.web;
-    const payload = JSON.stringify({
-      type: 'authorized_user',
-      client_id: key.client_id,
-      client_secret: key.client_secret,
-      refresh_token: this.client.credentials.refresh_token,
-    });
-    fs.writeFileSync(TOKEN_PATH, payload);
-  }
-  
-  /**
    * Load or request or authorization to call APIs.
    *
    */
