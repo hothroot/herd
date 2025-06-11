@@ -20,7 +20,6 @@ export default defineConfig({
     schema: {
       STAGING: envField.boolean({ context: "server", access:"public", default: false }),
       FIVECALLS_API: envField.string({ context: "server", access:"secret" }),
-      DRIVE_CREDENTIALS: envField.string({ context: "server", access:"secret" }),
       GOOGLE_TOKEN: envField.string({ context: "server", access:"secret" }),
     }
   },
