@@ -1,6 +1,13 @@
 # Herd on the Hill
 
-Source for the https://herdonthehill.org/ site.
+Source for the V2 of the [Herd on the Hill](https://herdonthehill.org/) site.
+
+## Design Goals
+
+- keep it simple to maintain and modify
+- keep as much of the prose and page structure as possible in content-forward astro files in the pages directory.
+- keep the server-side processes stateless for ease of maintainance and hosting
+- use modern tools and frameworks to increase the pool of potential maintainers
 
 ## 🚀 Project Structure
 
@@ -9,12 +16,30 @@ Source for the https://herdonthehill.org/ site.
 ├── public/
 │   └── favicon.svg
 ├── src/
+│   ├── assets/
 │   ├── components/
+│   │   └── letter/
+│   │   |   └── AddressForm.tsx
+│   │   |   └── Draft.tsx
+│   │   └── ui/
 │   │   └── Header.astro
+│   │   └── PhotoCarousel.jsx
 │   ├── layouts/
 │   │   └── BaseLayout.astro
 │   └── pages/
+│       └── contact.astro
 │       └── index.astro
+│       └── letter.astro
+│       └── volunteer.astro
+│   └── scripts/
+│       └── devdata.astro
+│       └── letter-*.ts
+│       └── search-reps.ts
+│       └── states.astro
+│   └── styles/
+│       └── global.css
+├── scripts/
+│   ├── grant.js
 └── package.json
 ```
 
