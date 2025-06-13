@@ -26,5 +26,5 @@ a hard prerequisite to merging into main, and therefore production.
 ## Code of Conduct
 
 We adopt the 
-Contributor Covenant](https://gist.github.com/PurpleBooth/b24679402957c63ec426#:~:text=Contributor%20Covenant)
+[Contributor Covenant](https://gist.github.com/PurpleBooth/b24679402957c63ec426#:~:text=Contributor%20Covenant)
 available at http://contributor-covenant.org/version/1/4
