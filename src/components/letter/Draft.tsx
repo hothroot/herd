@@ -53,7 +53,7 @@ export default function Draft(props: Props) {
                             const canvas = new OffscreenCanvas(headshot.current.clientWidth * 2, headshot.current.clientHeight * 2);
                             const context = canvas.getContext('2d');
                             context?.drawImage(headshot.current, 0, 0, canvas.width, canvas.height); 
-                            canvas.convertToBlob({ type: 'image/png', quality: 0.9 })
+                            canvas.convertToBlob({ type: 'image/jpg', quality: 0.9 })
                             .then(blob => {
                                 const reader = new FileReader();
                                 reader.onloadend = function() {
