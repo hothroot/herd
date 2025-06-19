@@ -2,7 +2,7 @@ import PDFDocument from 'pdfkit';
 import { type Address, type Rep } from '@/scripts/letter-state.js';
 import { stateDecoder } from '@/scripts//states.ts';
 
-export default function letterToPdf(address: Address, rep: Rep, today: string, message: string) {
+export default function letterToPdf(address: Address, rep: Rep, today: string, message: string, photo: string | null) {
     const postalCode = stateDecoder(address.state);
     const senator = rep.name;
     const messageClean = message.replaceAll('\r', '');
@@ -52,6 +52,9 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
 
     doc.text(messageClean); doc.moveDown();
 
+    if (photo) {
+        doc.image(photo, 250, doc.y, {width: 50});
+    }
     doc.text('Sincerely yours,', {indent: 250}); doc.moveDown();
     doc.text(address.name, {indent: 250});
 

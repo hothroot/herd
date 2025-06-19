@@ -70,7 +70,22 @@ export default function Draft(props: Props) {
                 <div className="w-2/3 md:w-1/2 md:float-right">
                     <div className="flex md:flex-row flex-col">
                         <img className="w-1/3" src={profileRef.src} alt="your photo here" />
+                        <img className="w-1/3"
+                             id="headshot" 
+                             src={profileRef.src}
+                             alt="your photo here"/>
                     </div>
+                    <p>
+                    <input className="hidden"
+                            type="file"
+                            id="image-upload" name="image-upload" 
+                            accept="image/png, image/jpeg" />    
+                    <Button type="button"
+                            id="image-upload-button"
+                            >
+                        Choose Photo
+                    </Button>
+                    </p>
                     <p>
                         Sincerely yours,
                     </p>
@@ -88,14 +103,15 @@ export default function Draft(props: Props) {
                             <span> Submit </span>
                         )}
                     </Button>
-                    <input type="hidden" id="name" name="name" value={address.name} />
-                    <input type="hidden" id="street" name="street" value={address.street} />
-                    <input type="hidden" id="city" name="city" value={address.city} />
-                    <input type="hidden" id="state" name="state" value={address.state} />
+                    <input type="hidden" id="name" name="name" value={address.name} /> 
+                    <input type="hidden" id="street" name="street" value={address.street} /> 
+                    <input type="hidden" id="city" name="city" value={address.city} /> 
+                    <input type="hidden" id="state" name="state" value={address.state} /> 
                     <input type="hidden" id="zipcode" name="zipcode" value={address.zipcode} />
                     <input type="hidden" id="today" name="today" value={today} />
-                    {reps.map((rep: { [x: string]: string; }, i: number) =>
-                        <input type="hidden" id={"senator" + i} name={"senator" + i} value={rep['name']} />
+                    <input type="hidden" id="headshot-data" name="headshot-data" value="" />
+                    {reps.map((rep: { [x: string]: string; }, i: number) => 
+                        <input type="hidden" id={"senator" + i} name={"senator" + i} value={rep['name']} /> 
                     )}
                 </div>
             </div>
