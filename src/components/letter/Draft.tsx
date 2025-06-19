@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { type Address, type Reps } from '@/scripts/letter-state.js';
 import profileRef from '../../assets/profile.png';
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 const today = new Date().toLocaleString('default', {
     weekday: 'long',
@@ -20,15 +20,60 @@ type Props = {
     reps: Reps,
 };
 
+
+
 export default function Draft(props: Props) {
     const address = props.address;
     const reps = props.reps;
-
+    
+    const headshot = useRef<HTMLImageElement>(null);
+    const uploadInput = useRef<HTMLInputElement>(null);
+    
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const [headshotData, setHeadshotData] = useState("");
 
     function handleSubmit() {
         setIsSubmitting(true);
+    }
+
+    function initiateUpload() {
+        if (uploadInput.current) {
+            uploadInput.current.click();
+        }
+    }
+
+    function processImage(e: React.ChangeEvent<HTMLInputElement>) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(readerEvent) {
+                if (headshot.current) {
+                    headshot.current.onload = function(imageEvent) {
+                        if (headshot.current) {
+                            // resize into a canvas incase it is large
+                            const canvas = new OffscreenCanvas(headshot.current.clientWidth * 2, headshot.current.clientHeight * 2);
+                            const context = canvas.getContext('2d');
+                            context?.drawImage(headshot.current, 0, 0, canvas.width, canvas.height); 
+                            canvas.convertToBlob({ type: 'image/png', quality: 0.9 })
+                            .then(blob => {
+                                const reader = new FileReader();
+                                reader.onloadend = function() {
+                                    // store as a data url for uploading in the
+                                    if (typeof reader.result === "string") {
+                                        setHeadshotData(reader.result);
+                                    }
+                                };
+                                reader.readAsDataURL(blob);
+                            });
+                        }
+                    }
+                    // load image into letter so user can see it
+                    if (readerEvent.target && typeof readerEvent.target.result === "string") {
+                        headshot.current.src = readerEvent.target.result;
+                    }
+                }
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
     }
 
     return (
@@ -49,14 +94,14 @@ export default function Draft(props: Props) {
                 <div className="w-2/3 md:w-1/2 md:float-left">
                     <div className="flex flex-row">
                         {reps.map((rep: { [x: string]: string; }) =>
-                            <img className="w-1/3 m-1" src={rep['photoURL']} alt={rep['name']} />
+                            <img className="w-1/3 m-1" src={rep['photoURL']} alt={rep['name']} key={rep['name']}/>
                         )}
                     </div>
                     <p>
                         {today}
                     </p>
                     {reps.map((rep: { [x: string]: string; }) =>
-                        <p className="m-0">
+                        <p className="m-0" key={rep['name']}>
                             The Honorable {rep['name']},
                         </p>
                     )}
@@ -69,19 +114,22 @@ export default function Draft(props: Props) {
             <div className="flow-root">
                 <div className="w-2/3 md:w-1/2 md:float-right">
                     <div className="flex md:flex-row flex-col">
-                        <img className="w-1/3" src={profileRef.src} alt="your photo here" />
-                        <img className="w-1/3"
+                        <img className="w-1/3 rounded-md m-2"
                              id="headshot" 
                              src={profileRef.src}
-                             alt="your photo here"/>
+                             alt="your photo here"
+                             ref={headshot}/>
                     </div>
                     <p>
                     <input className="hidden"
                             type="file"
                             id="image-upload" name="image-upload" 
-                            accept="image/png, image/jpeg" />    
+                            accept="image/png, image/jpeg" 
+                            ref={uploadInput}
+                            onChange={processImage}/>    
                     <Button type="button"
                             id="image-upload-button"
+                            onClick={initiateUpload}
                             >
                         Choose Photo
                     </Button>
@@ -109,9 +157,9 @@ export default function Draft(props: Props) {
                     <input type="hidden" id="state" name="state" value={address.state} /> 
                     <input type="hidden" id="zipcode" name="zipcode" value={address.zipcode} />
                     <input type="hidden" id="today" name="today" value={today} />
-                    <input type="hidden" id="headshot-data" name="headshot-data" value="" />
+                    <input type="hidden" id="headshot-data" name="headshot-data" value={headshotData} />
                     {reps.map((rep: { [x: string]: string; }, i: number) => 
-                        <input type="hidden" id={"senator" + i} name={"senator" + i} value={rep['name']} /> 
+                        <input type="hidden" id={"senator" + i} name={"senator" + i} value={rep['name']} key={rep['name']}/> 
                     )}
                 </div>
             </div>

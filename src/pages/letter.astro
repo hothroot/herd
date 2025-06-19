@@ -75,7 +75,3 @@ if (Astro.request.method === 'POST') {
     {isDraft && <Draft address={address} reps={reps} client:load /> } 
     {isDone  && <Receipt links={links} /> }
 </BaseLayout>
-
-<script>
-    import "../scripts/photo-picker.js";
-</script>
