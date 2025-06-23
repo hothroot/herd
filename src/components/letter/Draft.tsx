@@ -25,10 +25,10 @@ type Props = {
 export default function Draft(props: Props) {
     const address = props.address;
     const reps = props.reps;
-    
+
     const headshot = useRef<HTMLImageElement>(null);
     const uploadInput = useRef<HTMLInputElement>(null);
-    
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [headshotData, setHeadshotData] = useState("");
     const [headshotSource, setheadshotSource] = useState(profileRef.src);
@@ -42,13 +42,13 @@ export default function Draft(props: Props) {
             uploadInput.current.click();
         }
     }
-    
+
     function scaleHeadshot() {
         if (headshot.current) {
             // resize into a canvas incase it is large
             const canvas = new OffscreenCanvas(headshot.current.clientWidth * 2, headshot.current.clientHeight * 2);
             const context = canvas.getContext('2d');
-            context?.drawImage(headshot.current, 0, 0, canvas.width, canvas.height); 
+            context?.drawImage(headshot.current, 0, 0, canvas.width, canvas.height);
             canvas.convertToBlob({ type: 'image/jpg', quality: 0.9 })
             .then(blob => {
                 const canvasReader = new FileReader();
@@ -68,7 +68,7 @@ export default function Draft(props: Props) {
             const reader = new FileReader();
             reader.onload = function(readerEvent) {
                 if (headshot.current && readerEvent.target && typeof readerEvent.target.result === "string") {
-                    headshot.current.onload = scaleHeadshot; 
+                    headshot.current.onload = scaleHeadshot;
                     setheadshotSource(readerEvent.target.result);
                 }
             }
@@ -115,7 +115,7 @@ export default function Draft(props: Props) {
                 <div className="w-2/3 md:w-1/2 md:float-right">
                     <div className="flex md:flex-row flex-col">
                         <img className="w-1/3 rounded-md m-2"
-                             id="headshot" 
+                             id="headshot"
                              alt="your photo here"
                              src={headshotSource}
                              ref={headshot}/>
@@ -123,10 +123,10 @@ export default function Draft(props: Props) {
                     <p>
                     <input className="hidden"
                             type="file"
-                            id="image-upload" name="image-upload" 
-                            accept="image/png, image/jpeg" 
+                            id="image-upload" name="image-upload"
+                            accept="image/png, image/jpeg"
                             ref={uploadInput}
-                            onChange={processImage}/>    
+                            onChange={processImage}/>
                     <Button type="button"
                             id="image-upload-button"
                             onClick={initiateUpload}
@@ -151,15 +151,15 @@ export default function Draft(props: Props) {
                             <span> Submit </span>
                         )}
                     </Button>
-                    <input type="hidden" id="name" name="name" value={address.name} /> 
-                    <input type="hidden" id="street" name="street" value={address.street} /> 
-                    <input type="hidden" id="city" name="city" value={address.city} /> 
-                    <input type="hidden" id="state" name="state" value={address.state} /> 
+                    <input type="hidden" id="name" name="name" value={address.name} />
+                    <input type="hidden" id="street" name="street" value={address.street} />
+                    <input type="hidden" id="city" name="city" value={address.city} />
+                    <input type="hidden" id="state" name="state" value={address.state} />
                     <input type="hidden" id="zipcode" name="zipcode" value={address.zipcode} />
                     <input type="hidden" id="today" name="today" value={today} />
                     <input type="hidden" id="headshot-data" name="headshot-data" value={headshotData} />
-                    {reps.map((rep: { [x: string]: string; }, i: number) => 
-                        <input type="hidden" id={"senator" + i} name={"senator" + i} value={rep['name']} key={rep['name']}/> 
+                    {reps.map((rep: { [x: string]: string; }, i: number) =>
+                        <input type="hidden" id={"senator" + i} name={"senator" + i} value={rep['name']} key={rep['name']}/>
                     )}
                 </div>
             </div>
