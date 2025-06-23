@@ -29,3 +29,5 @@ output.pdf
 credentials.json
 token.json
 .netlify
+.dev.vars
+.wrangler

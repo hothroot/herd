@@ -1,3 +1,4 @@
+// @ts-check
 import { defineConfig, envField } from 'astro/config';
 
 import tailwindcss from "@tailwindcss/vite";
@@ -13,6 +14,14 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      // Use react-dom/server.edge instead of react-dom/server.browser for React 19.
+      // Without this, MessageChannel from node:worker_threads needs to be polyfilled.
+      // https://github.com/withastro/astro/issues/12824
+      alias: import.meta.env.PROD && {
+        "react-dom/server": "react-dom/server.edge",
+      },
+    }
   },
 
   env: {
@@ -23,11 +32,6 @@ export default defineConfig({
     }
   },
 
-  adapter: cloudflare({
-    vite: {
-      ssr: {
-        external: ['node:buffer'],
-      },
-    },
-  }),
+  adapter: cloudflare(),
+  
 });
