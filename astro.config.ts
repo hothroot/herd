@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig, envField } from 'astro/config';
 
 import tailwindcss from "@tailwindcss/vite";
@@ -24,5 +23,11 @@ export default defineConfig({
     }
   },
 
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    vite: {
+      ssr: {
+        external: ['node:buffer'],
+      },
+    },
+  }),
 });
