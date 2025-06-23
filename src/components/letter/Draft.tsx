@@ -31,6 +31,7 @@ export default function Draft(props: Props) {
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [headshotData, setHeadshotData] = useState("");
+    const [headshotSource, setheadshotSource] = useState(profileRef.src);
 
     function handleSubmit() {
         setIsSubmitting(true);
@@ -41,35 +42,34 @@ export default function Draft(props: Props) {
             uploadInput.current.click();
         }
     }
+    
+    function scaleHeadshot() {
+        if (headshot.current) {
+            // resize into a canvas incase it is large
+            const canvas = new OffscreenCanvas(headshot.current.clientWidth * 2, headshot.current.clientHeight * 2);
+            const context = canvas.getContext('2d');
+            context?.drawImage(headshot.current, 0, 0, canvas.width, canvas.height); 
+            canvas.convertToBlob({ type: 'image/jpg', quality: 0.9 })
+            .then(blob => {
+                const canvasReader = new FileReader();
+                canvasReader.onloadend = function() {
+                    // store as a data url for uploading in the
+                    if (typeof canvasReader.result === "string") {
+                        setHeadshotData(canvasReader.result);
+                    }
+                };
+                canvasReader.readAsDataURL(blob);
+            });
+        }
+    }
 
     function processImage(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target.files && e.target.files[0]) {
             const reader = new FileReader();
             reader.onload = function(readerEvent) {
-                if (headshot.current) {
-                    headshot.current.onload = function(imageEvent) {
-                        if (headshot.current) {
-                            // resize into a canvas incase it is large
-                            const canvas = new OffscreenCanvas(headshot.current.clientWidth * 2, headshot.current.clientHeight * 2);
-                            const context = canvas.getContext('2d');
-                            context?.drawImage(headshot.current, 0, 0, canvas.width, canvas.height); 
-                            canvas.convertToBlob({ type: 'image/jpg', quality: 0.9 })
-                            .then(blob => {
-                                const reader = new FileReader();
-                                reader.onloadend = function() {
-                                    // store as a data url for uploading in the
-                                    if (typeof reader.result === "string") {
-                                        setHeadshotData(reader.result);
-                                    }
-                                };
-                                reader.readAsDataURL(blob);
-                            });
-                        }
-                    }
-                    // load image into letter so user can see it
-                    if (readerEvent.target && typeof readerEvent.target.result === "string") {
-                        headshot.current.src = readerEvent.target.result;
-                    }
+                if (headshot.current && readerEvent.target && typeof readerEvent.target.result === "string") {
+                    headshot.current.onload = scaleHeadshot; 
+                    setheadshotSource(readerEvent.target.result);
                 }
             }
             reader.readAsDataURL(e.target.files[0]);
@@ -116,8 +116,8 @@ export default function Draft(props: Props) {
                     <div className="flex md:flex-row flex-col">
                         <img className="w-1/3 rounded-md m-2"
                              id="headshot" 
-                             src={profileRef.src}
                              alt="your photo here"
+                             src={headshotSource}
                              ref={headshot}/>
                     </div>
                     <p>
