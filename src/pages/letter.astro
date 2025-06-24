@@ -50,11 +50,15 @@ if (Astro.request.method === 'POST') {
         if (senator1 !== "") {
             reps[1] = { "name" : senator1 };
         } 
+        let photoData: string | null = formToString(formData.get("headshot-data"));
+        if (!photoData.startsWith("data:image/png")) {
+            photoData = null;
+        }
         const store = new StorageApi();
         const letters = reps.map((rep) => {
             return {
                 filename: `${rep.name} - ${today} - ${address.name}.pdf`,
-                data: letterToPdf(address, rep, today, message),
+                data: letterToPdf(address, rep, today, message, photoData),
             }
         });
         links = await store.uploadLetters(letters);

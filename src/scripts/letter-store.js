@@ -1,10 +1,15 @@
 import { google } from 'googleapis';
 import { GOOGLE_TOKEN } from "astro:env/server";
+const isDev = import.meta.env.DEV;
+const isStaging = import.meta.env.STAGING;
 
 export class StorageApi {
   constructor() {
     this.client = undefined;
     this.weekId = undefined;
+    this. topFolder = isDev ? 'Letters-Development' : 
+                      isStaging ? 'Letters-Staging' : 
+                      'Letters';
   }
 
   /**
@@ -85,7 +90,7 @@ export class StorageApi {
       const year = weekStart.getFullYear().toString().padStart(4, "0");
       const folderName = `${year}-${month}-${day}`;
   
-      const lettersId = await this.findOrCreateFolder('Letters', undefined);
+      const lettersId = await this.findOrCreateFolder(this.topFolder, undefined);
       this.weekId = await this.findOrCreateFolder(folderName, lettersId);
     }
     return this.weekId;
