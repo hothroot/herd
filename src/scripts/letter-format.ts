@@ -2,15 +2,14 @@ import PDFDocument from 'pdfkit';
 import { type Address, type Rep } from '@/scripts/letter-state.js';
 import { stateDecoder } from '@/scripts//states.ts';
 
-export default function letterToPdf(address: Address, rep: Rep, today: string, message: string) {
+export default function letterToPdf(fontData: Uint8Array, address: Address, rep: Rep, today: string, message: string) {
     const postalCode = stateDecoder(address.state);
     const senator = rep.name;
     const messageClean = message.replaceAll('\r', '');
     const margin = 72;
-
     const doc = new PDFDocument({
         size: 'LETTER',
-        font: 'Times-Roman',
+        font: fontData,
         info: {
             'Title': `a constituent letter for ${rep.name}`,
             'Subject': `authored by ${address['name']} using HerdOnTheHill.org`,

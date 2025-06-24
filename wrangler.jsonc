@@ -11,5 +11,8 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "vars": {
+    "IS_WRANGLER": true,
+  },
 }
