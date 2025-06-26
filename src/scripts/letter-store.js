@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import { GOOGLE_TOKEN } from "astro:env/server";
+import { SERVICE_KEY } from "astro:env/server";
 const isDev = import.meta.env.DEV;
 const isStaging = import.meta.env.STAGING;
 
@@ -11,32 +11,21 @@ export class StorageApi {
                       isStaging ? 'Letters-Staging' : 
                       'Letters';
   }
-
-  /**
-   * Reads previously authorized credentials from the save file.
-   *
-   * @return {Promise<OAuth2Client|null>}
-   */
-  loadSavedCredentialsIfExist() {
-    try {
-      const content = GOOGLE_TOKEN;
-      const credentials = JSON.parse(content);
-      return google.auth.fromJSON(credentials);
-    } catch (err) {
-      throw err;
-    }
-  }
   
   /**
    * Load or request or authorization to call APIs.
    *
    */
   async authorize() {
-    this.client = this.loadSavedCredentialsIfExist();
-    if (this.client) {
+    try {
+      const keys = JSON.parse(SERVICE_KEY);
+      this.client = google.auth.fromJSON(keys);
+      this.client.scopes = ['https://www.googleapis.com/auth/drive'];
       return this.client;
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
-    throw new Error("Missing oauth token for the Google Drive API.");
   }
   
   /**
