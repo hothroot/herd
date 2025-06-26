@@ -102,17 +102,19 @@ export class StorageApi {
     if (!this.weekId) {
       await this.getWeeklyFolder();
     }
-    let links = letters.map((letter) => {
+    let linkPromises = letters.map((letter) => {
       return this.uploadLetter(letter);
     });
-    return await Promise.all(links);
+    const links = await Promise.all(linkPromises);
+    return links;
   }
 
   async uploadLetter(letter) {
     const drive = google.drive({version: 'v3', auth: this.client});
-    const fileMetadata = {
+    const requestBody = {
       name: letter.filename,
       fields: 'id',
+      mimeType: 'application/pdf',
       parents: [ this.weekId ],
     };
     const media = {
@@ -122,9 +124,8 @@ export class StorageApi {
 
     try {
       let file = await drive.files.create({  // @ts-ignore await definitely does have an effect here
-        requestBody: fileMetadata,
+        requestBody,
         media: media,
-        fields: 'id',
       });
       drive.permissions.create({
         fileId: file.data.id,
@@ -136,6 +137,7 @@ export class StorageApi {
 
       return `https://drive.google.com/file/d/${file.data.id}/view?usp=sharing`;
     } catch (err) {
+      console.log(err);
       throw err;
     }
   }

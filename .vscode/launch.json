@@ -6,6 +6,16 @@
       "name": "Development server",
       "request": "launch",
       "type": "node-terminal"
-    }
+    },
+    {
+      "name": "Wrangler",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "cwd": "/",
+      "resolveSourceMapLocations": null,
+      "attachExistingChildren": false,
+      "autoAttachChildProcesses": false
+    },
   ]
 }
