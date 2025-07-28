@@ -1,15 +1,11 @@
 import { google } from 'googleapis';
 import { SERVICE_KEY, DRIVE_ID } from "astro:env/server";
-const isDev = import.meta.env.DEV;
-const isStaging = import.meta.env.STAGING;
 
 export class StorageApi {
   constructor() {
     this.client = undefined;
     this.weekId = undefined;
-    this. topFolder = isDev ? 'Letters-Development' : 
-                      isStaging ? 'Letters-Staging' : 
-                      'Letters';
+    this.topFolder = 'Letters';
   }
   
   /**
