@@ -79,7 +79,7 @@ function invert(s: StateList) : CodeList {
   const inverted: Record<string, string> = {};
   for (const code in s) {
     if (s.hasOwnProperty(code)) {
-        var name: string = s[code]["name"];
+        var name: string = s[code]["name"].toUpperCase();
       inverted[name] = code
     }
   }
@@ -89,8 +89,9 @@ function invert(s: StateList) : CodeList {
 const decoder: CodeList = invert(states);
 
 export function stateDecoder(probe: string) : string {
-    if (states.hasOwnProperty(probe)) {
-        return probe;
+    const ucProbe = probe.toUpperCase();
+    if (states.hasOwnProperty(ucProbe)) {
+        return ucProbe;
     }
-    return decoder[probe];
+    return decoder[ucProbe];
 }
