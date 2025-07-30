@@ -1,5 +1,5 @@
 import okData from "@/scripts/dev-data"
-import { type Address } from '@/scripts/letter-state.js';
+import { type Address, type Rep } from '@/scripts/letter-state.js';
 
 const isDev = import.meta.env.DEV;
 const apiKey = import.meta.env.FIVECALLS_API;
@@ -32,7 +32,7 @@ export default async function searchReps (origin: string, address: Address) {
         ? data['representatives'].filter((rep:any) => rep['area'] === 'US Senate') 
         : []);
     
-    reps = await Promise.all(reps.map(async (rep) => { 
+    reps = await Promise.all(reps.map(async (rep: Rep) => { 
         const state = rep['state'];
         const last = rep['name'].split(' ').slice(1).join("_");
         const response = await fetch(new URL(`/api/office_${last}_${state}.json`, origin));
