@@ -33,7 +33,8 @@ export const GET: APIRoute = ({ params, request }) => {
   return new Response(
     JSON.stringify({
       id: id,
-      office: offices.get(id),
+      fullname: offices.get(id)[0],
+      office: offices.get(id)[1],
     }),
   );
 };

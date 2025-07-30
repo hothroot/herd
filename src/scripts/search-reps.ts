@@ -4,7 +4,7 @@ import { type Address } from '@/scripts/letter-state.js';
 const isDev = import.meta.env.DEV;
 const apiKey = import.meta.env.FIVECALLS_API;
 
-export default async function searchReps (address: Address) {
+export default async function searchReps (origin: string, address: Address) {
     var data = undefined;
     if (isDev && address["name"] !== "fetch") {
         if (address["name"] === "error") {
@@ -27,9 +27,22 @@ export default async function searchReps (address: Address) {
             data = await response.json();
         }
     }
-    const reps = (
+    var reps = (
         'representatives' in data
         ? data['representatives'].filter((rep:any) => rep['area'] === 'US Senate') 
         : []);
+    
+    reps = await Promise.all(reps.map(async (rep) => { 
+        const state = rep['state'];
+        const last = rep['name'].split(' ').slice(1).join("_");
+        const response = await fetch(new URL(`/api/office_${last}_${state}.json`, origin));
+        if (response.ok) {
+            const details = await response.json();
+            rep["name"] = details["fullname"];
+            rep["street"] = details["office"];
+        }
+        return rep;
+    }));
+    
     return(reps);
 }

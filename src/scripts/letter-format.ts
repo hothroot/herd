@@ -5,6 +5,7 @@ import { stateDecoder } from '@/scripts//states.ts';
 export default function letterToPdf(address: Address, rep: Rep, today: string, message: string, photo: string | null) {
     const postalCode = stateDecoder(address.state);
     const senator = rep.name;
+    const street = rep.street ? `${rep.street}\n`: "";
     const messageClean = message.replaceAll('\r', '');
     const margin = 72;
 
@@ -44,6 +45,7 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
     doc.text(
         `The Honorable ${senator}\n` +
         `United States Senate\n` +
+        street +  
         `Washington, D.C. 20510`
         );
     doc.moveDown(2.0);
