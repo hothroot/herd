@@ -31,6 +31,5 @@ export default async function searchReps (address: Address) {
         'representatives' in data
         ? data['representatives'].filter((rep:any) => rep['area'] === 'US Senate') 
         : []);
-    console.log(reps);
     return(reps);
 }
