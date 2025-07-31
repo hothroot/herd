@@ -161,6 +161,9 @@ export default function Draft(props: Props) {
                     {reps.map((rep: { [x: string]: string; }, i: number) =>
                         <input type="hidden" id={"senator" + i} name={"senator" + i} value={rep['name']} key={rep['name']}/>
                     )}
+                    {reps.map((rep: { [x: string]: string; }, i: number) =>
+                        <input type="hidden" id={"office" + i} name={"office" + i} value={rep['street']} key={"office" + i}/>
+                    )}
                 </div>
             </div>
         </form>

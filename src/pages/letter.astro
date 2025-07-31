@@ -41,14 +41,16 @@ if (Astro.request.method === 'POST') {
         const today = formToString(formData.get("today"));
         const message = formToString(formData.get("message"));
         const senator0 = formToString(formData.get("senator0"));
+        const office0 = formToString(formData.get("office0"));
         const senator1 = formToString(formData.get("senator1"));
+        const office1 = formToString(formData.get("office1"));
         if (senator0 !== "") {
-            reps[0] = { "name" : senator0 };
+            reps[0] = { "name" : senator0, "street": office0 };
         } else {
             // error
         }
         if (senator1 !== "") {
-            reps[1] = { "name" : senator1 };
+            reps[1] = { "name" : senator1, "street": office1 };
         } 
         let photoData: string | null = formToString(formData.get("headshot-data"));
         if (!photoData.startsWith("data:image/png")) {
@@ -64,7 +66,7 @@ if (Astro.request.method === 'POST') {
         links = await store.uploadLetters(letters);
         isDone = true; 
     } else {
-        reps = await searchReps(address);
+        reps = await searchReps(Astro.url.origin, address);
         console.log(reps);
         isDraft = true;
     }

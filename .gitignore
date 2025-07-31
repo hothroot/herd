@@ -29,3 +29,9 @@ output.pdf
 credentials.json
 token.json
 .netlify
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
