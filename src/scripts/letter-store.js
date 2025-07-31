@@ -1,15 +1,11 @@
 import { google } from 'googleapis';
-import { SERVICE_KEY } from "astro:env/server";
-const isDev = import.meta.env.DEV;
-const isStaging = import.meta.env.STAGING;
+import { SERVICE_KEY, DRIVE_ID } from "astro:env/server";
 
 export class StorageApi {
   constructor() {
     this.client = undefined;
     this.weekId = undefined;
-    this. topFolder = isDev ? 'Letters-Development' : 
-                      isStaging ? 'Letters-Staging' : 
-                      'Letters';
+    this.topFolder = 'Letters';
   }
   
   /**
@@ -46,6 +42,10 @@ export class StorageApi {
     const res = await drive.files.list({
       pageSize: 10,
       q: query,
+      driveId: DRIVE_ID,
+      corpora: 'drive',
+      includeItemsFromAllDrives: true,
+      supportsAllDrives: true,
       fields: 'nextPageToken, files(id, name)',
     });
     const files = res.data.files;
@@ -61,6 +61,10 @@ export class StorageApi {
       const folder = await drive.files.create({
         requestBody: fileMetadata,
         fields: 'id',
+        driveId: DRIVE_ID,
+        corpora: 'drive',
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
       });
       return folder.data.id;
     }
@@ -119,6 +123,10 @@ export class StorageApi {
         requestBody: fileMetadata,
         media: media,
         fields: 'id',
+        driveId: DRIVE_ID,
+        corpora: 'drive',
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
       });
       drive.permissions.create({
         fileId: file.data.id,
@@ -126,6 +134,10 @@ export class StorageApi {
           type: "anyone",
           role: "reader",
         },
+        driveId: DRIVE_ID,
+        corpora: 'drive',
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
       });
 
       return `https://drive.google.com/file/d/${file.data.id}/view?usp=sharing`;
