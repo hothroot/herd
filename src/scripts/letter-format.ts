@@ -62,9 +62,24 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
     doc.on('pageAdded', () => {
         pageNumber ++;
         footer(doc, fontSize, foot, pageNumber);
-    });
+    });   
+    
+    var availableSpace = (doc.page.height
+        - doc.page.margins.bottom
+        - doc.page.margins.top
+    );
+    while ((doc.heightOfString(messageClean) + 20 * doc.currentLineHeight()) > availableSpace) {
+        fontSize *= 0.95;
+        doc.fontSize(fontSize);
+    }
 
-    doc.moveDown(2.0);
+    const centering = (
+        (availableSpace 
+            - (doc.heightOfString(messageClean))
+            - 20 * doc.currentLineHeight())
+        / (2 * doc.currentLineHeight())
+    );
+    doc.moveDown(centering);
 
     let line1 = address.name;
     let line2 = address.street;
@@ -74,18 +89,23 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
         doc.widthOfString(line2),
         doc.widthOfString(line3),
     );
-    let addressIndent = doc.page.width - 2 * margin - addressWidth - 5;
+    let addressIndent = doc.page.width - 2 * margin - addressWidth;
 
+    if (photo) {
+        addressIndent -= 75;
+        doc.image(photo, doc.page.width - doc.page.margins.right - 75, doc.y, {width: 75});
+    }
     doc.text(
         `${line1}\n${line2}\n${line3}`,
         {
             indent: addressIndent,
         }
     );
-    doc.moveDown(1.0);
+    doc.moveDown();
 
     doc.text(today);
-    doc.moveDown(1.0);
+    doc.moveDown();
+
     doc.text(
         `The Honorable ${rep.fullName}\n` +
         `United States Senate\n` +
@@ -96,24 +116,9 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
 
     doc.text(`Dear Senator ${rep.salutation},`); doc.moveDown();
 
-    var spaceRemaining = (doc.page.height
-        - doc.page.margins.bottom
-        - doc.y
-        - 5 * doc.currentLineHeight()
-    );
-    while (doc.heightOfString(messageClean) > spaceRemaining) {
-        fontSize *= 0.95;
-        doc.fontSize(fontSize);
-    }
-    doc.text(messageClean); doc.moveDown();
-    
-    fontSize = FONT_SIZE;
-    doc.fontSize(fontSize);
+    doc.text(messageClean); doc.moveDown(2.0);
 
-    if (photo) {
-        doc.image(photo, 250, doc.y, {width: 50});
-    }
-    doc.text('Sincerely yours,', {indent: 250}); doc.moveDown();
+    doc.text('Sincerely yours,', {indent: 250});
     doc.text(address.name, {indent: 250});
 
     doc.end();
