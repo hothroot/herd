@@ -7,10 +7,12 @@ import react from "@astrojs/react";
 
 import netlify from "@astrojs/netlify";
 
+import sitemap from "@astrojs/sitemap";
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()],
-  site: "https://astroherd.netlify.app/",
+  integrations: [react(), sitemap()],
+  site: "https://herdonthehill.com/",
 
   vite: {
     plugins: [tailwindcss()],
