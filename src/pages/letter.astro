@@ -5,14 +5,13 @@ import AddressForm from '../components/letter/AddressForm';
 import Draft from '../components/letter/Draft';
 import Receipt from '../components/letter/Receipt.astro';
 
-import { type Address, type Reps } from '@/scripts/letter-state.js';
+import { type Address, type Reps, type Rep } from '@/scripts/letter-state.js';
 import searchReps from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
 import { StorageApi } from '@/scripts/letter-store.js';
 
 const pageTitle = "Send a Letter";
 
-var address: Address = {};
 var reps: Reps = [];
 var links: Array<string> =[];
 var isGet = true;
@@ -32,48 +31,42 @@ function formToString(value: FormDataEntryValue | null) {
 if (Astro.request.method === 'POST') {
     isGet = false;
     const formData = await Astro.request.formData();
-    address["name"] = formToString(formData.get("name"));
-    address["street"] = formToString(formData.get("street"));
-    address["city"] = formToString(formData.get("city"));
-    address["state"] = formToString(formData.get("state"));
-    address["zipcode"] = formToString(formData.get("zipcode"));
-    if (formData.has("message")) {
-        const today = formToString(formData.get("today"));
+    var envelope;
+    if (formData.has("envelope")) {
+        var envelope = JSON.parse(formToString(formData.get("envelope")));
+        const address = envelope.address;
+        const reps = envelope.reps
         const message = formToString(formData.get("message"));
-        const senator0 = formToString(formData.get("senator0"));
-        const office0 = formToString(formData.get("office0"));
-        const senator1 = formToString(formData.get("senator1"));
-        const office1 = formToString(formData.get("office1"));
-        if (senator0 !== "") {
-            reps[0] = { "name" : senator0, "street": office0 };
-        } else {
-            // error
-        }
-        if (senator1 !== "") {
-            reps[1] = { "name" : senator1, "street": office1 };
-        } 
+        const today = formToString(formData.get("today"));
         let photoData: string | null = formToString(formData.get("headshot-data"));
         if (!photoData.startsWith("data:image/png")) {
             photoData = null;
         }
         const store = new StorageApi();
-        const letters = reps.map((rep) => {
+        const letters = reps.map((rep: Rep) => {
             return {
-                filename: `${rep.name} - ${today} - ${address.name}.pdf`,
+                filename: `${rep.salutation} - ${today} - ${address.name}.pdf`,
                 data: letterToPdf(address, rep, today, message, photoData),
             }
         });
         links = await store.uploadLetters(letters);
         isDone = true; 
     } else {
-        reps = await searchReps(Astro.url.origin, address);
-        console.log(reps);
+        var address = { 
+            name: formToString(formData.get("name")),
+            street: formToString(formData.get("street")),
+            city: formToString(formData.get("city")),
+            state: formToString(formData.get("state")),
+            zipcode: formToString(formData.get("zipcode")),
+        }
+        envelope = await searchReps(Astro.url.origin, address);
+        console.log(envelope);
         isDraft = true;
     }
 }
 ---
 <BaseLayout pageTitle={pageTitle}>
     {isGet   && <AddressForm client:load /> }
-    {isDraft && <Draft address={address} reps={reps} client:load /> } 
+    {isDraft && <Draft envelope={envelope} client:load /> } 
     {isDone  && <Receipt links={links} /> }
 </BaseLayout>

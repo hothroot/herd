@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 
-import { type Address, type Reps } from '@/scripts/letter-state.js';
+import { type Envelope, type Address, type Reps, type Rep} from '@/scripts/letter-state.js';
 import profileRef from '../../assets/profile.png';
 
 import React, { useRef, useState } from "react";
@@ -16,15 +16,15 @@ const today = new Date().toLocaleString('default', {
 });
 
 type Props = {
-    address: Address,
-    reps: Reps,
+    envelope: Envelope,
 };
 
 
 
 export default function Draft(props: Props) {
-    const address = props.address;
-    const reps = props.reps;
+    const envelope = props.envelope;
+    const address = envelope.address;
+    const reps = envelope.reps;
 
     const headshot = useRef<HTMLImageElement>(null);
     const uploadInput = useRef<HTMLInputElement>(null);
@@ -100,9 +100,9 @@ export default function Draft(props: Props) {
                     <p>
                         {today}
                     </p>
-                    {reps.map((rep: { [x: string]: string; }) =>
-                        <p className="m-0" key={rep['name']}>
-                            The Honorable {rep['name']},
+                    {reps.map((rep: Rep) =>
+                        <p className="m-0" key={rep.id}>
+                            The Honorable {rep.fullName},
                         </p>
                     )}
                 </div>
@@ -151,19 +151,9 @@ export default function Draft(props: Props) {
                             <span> Submit </span>
                         )}
                     </Button>
-                    <input type="hidden" id="name" name="name" value={address.name} />
-                    <input type="hidden" id="street" name="street" value={address.street} />
-                    <input type="hidden" id="city" name="city" value={address.city} />
-                    <input type="hidden" id="state" name="state" value={address.state} />
-                    <input type="hidden" id="zipcode" name="zipcode" value={address.zipcode} />
+                    <input type="hidden" id="envelope" name="envelope" value={JSON.stringify(envelope)} />
                     <input type="hidden" id="today" name="today" value={today} />
                     <input type="hidden" id="headshot-data" name="headshot-data" value={headshotData} />
-                    {reps.map((rep: { [x: string]: string; }, i: number) =>
-                        <input type="hidden" id={"senator" + i} name={"senator" + i} value={rep['name']} key={rep['name']}/>
-                    )}
-                    {reps.map((rep: { [x: string]: string; }, i: number) =>
-                        <input type="hidden" id={"office" + i} name={"office" + i} value={rep['street']} key={"office" + i}/>
-                    )}
                 </div>
             </div>
         </form>

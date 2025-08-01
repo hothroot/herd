@@ -4,8 +4,7 @@ import { stateDecoder } from '@/scripts//states.ts';
 
 export default function letterToPdf(address: Address, rep: Rep, today: string, message: string, photo: string | null) {
     const postalCode = stateDecoder(address.state);
-    const senator = rep.name;
-    const street = rep.street ? `${rep.street}\n`: "";
+    const officeLine = rep.office !== "unknown" ? `${rep.office}\n`: "";
     const messageClean = message.replaceAll('\r', '');
     const margin = 72;
 
@@ -13,7 +12,7 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
         size: 'LETTER',
         font: 'Times-Roman',
         info: {
-            'Title': `a constituent letter for ${rep.name}`,
+            'Title': `a constituent letter for ${rep.fullName}`,
             'Subject': `authored by ${address['name']} using HerdOnTheHill.org`,
         },
         margin: margin,
@@ -43,14 +42,14 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
     doc.text(today);
     doc.moveDown(2.0);
     doc.text(
-        `The Honorable ${senator}\n` +
+        `The Honorable ${rep.fullName}\n` +
         `United States Senate\n` +
-        street +  
+        officeLine +  
         `Washington, D.C. 20510`
         );
     doc.moveDown(2.0);
 
-    doc.text(`Dear Senator ${senator},`); doc.moveDown();
+    doc.text(`Dear Senator ${rep.salutation},`); doc.moveDown();
 
     doc.text(messageClean); doc.moveDown();
 
