@@ -1,5 +1,6 @@
 import okData from "@/scripts/dev-data"
 import { type Address, type Envelope, type Rep } from '@/scripts/letter-state.js';
+import { signEnvelope } from "@/scripts/crypto";
 
 const isDev = import.meta.env.DEV;
 const apiKey = import.meta.env.FIVECALLS_API;
@@ -61,6 +62,6 @@ export default async function searchReps (origin: string, address: Address) {
         reps: reps,
         signature: "",
     };
-    
+    envelope.signature = signEnvelope(envelope);
     return(envelope);
 }

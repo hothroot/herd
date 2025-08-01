@@ -22,6 +22,7 @@ export default defineConfig({
       FIVECALLS_API: envField.string({ context: "server", access:"secret" }),
       SERVICE_KEY: envField.string({ context: "server", access:"secret" }),
       DRIVE_ID: envField.string({ context: "server", access:"secret" }),
+      ENVELOPE_KEY: envField.string({ context: "server", access:"secret" }),
     }
   },
 

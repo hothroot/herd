@@ -4,11 +4,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AddressForm from '../components/letter/AddressForm';
 import Draft from '../components/letter/Draft';
 import Receipt from '../components/letter/Receipt.astro';
+import Error from '../components/letter/Error.astro';
 
 import { type Address, type Reps, type Rep } from '@/scripts/letter-state.js';
 import searchReps from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
 import { StorageApi } from '@/scripts/letter-store.js';
+import { validateEnvelope } from "@/scripts/crypto";
 
 const pageTitle = "Send a Letter";
 
@@ -17,6 +19,7 @@ var links: Array<string> =[];
 var isGet = true;
 var isDraft = false;
 var isDone = false;
+var isValidEnvelope = false;
 
 function formToString(value: FormDataEntryValue | null) {
     if (value === null) {
@@ -34,6 +37,7 @@ if (Astro.request.method === 'POST') {
     var envelope;
     if (formData.has("envelope")) {
         var envelope = JSON.parse(formToString(formData.get("envelope")));
+        isValidEnvelope = validateEnvelope(envelope);
         const address = envelope.address;
         const reps = envelope.reps
         const message = formToString(formData.get("message"));
@@ -68,5 +72,6 @@ if (Astro.request.method === 'POST') {
 <BaseLayout pageTitle={pageTitle}>
     {isGet   && <AddressForm client:load /> }
     {isDraft && <Draft envelope={envelope} client:load /> } 
-    {isDone  && <Receipt links={links} /> }
+    {isDone && isValidEnvelope && <Receipt links={links} /> }
+    {isDone && !isValidEnvelope && <Error /> }
 </BaseLayout>
