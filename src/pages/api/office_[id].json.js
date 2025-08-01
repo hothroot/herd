@@ -1,4 +1,3 @@
-import type { APIRoute } from "astro";
 import xml2js from "xml2js";
 /**
  * yes, yes:
@@ -21,20 +20,25 @@ const officeData = phonebook.contact_information.member.map(member => {
   const lastName = member.last_name[0];
   const fullname = `${firstName} ${lastName}`
   const state = member.state[0];
-  var address = member.address[0];
-  address = address.substring(0, address.indexOf(' Washington'));
-  return [`${lastName} ${state}`.replace(/ /g, '_'), [fullname, address] ];
+  var office = member.address[0];
+  office = office.substring(0, office.indexOf(' Washington'));
+  return [`${lastName} ${state}`.replace(/ /g, '_'), {
+    fullname: fullname,
+    lastname: lastName,
+    office: office,
+  }];
 });
 const offices = new Map(officeData);
 
-export const GET: APIRoute = ({ params, request }) => {
+export const GET = ({ params, request }) => {
   const id = params.id ? params.id : "unknown";
 
   return new Response(
     JSON.stringify({
       id: id,
-      fullname: offices.get(id)[0],
-      office: offices.get(id)[1],
+      fullname: offices.get(id).fullname,
+      lastname: offices.get(id).lastname,
+      office: offices.get(id).office,
     }),
   );
 };

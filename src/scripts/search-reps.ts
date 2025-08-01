@@ -1,5 +1,6 @@
 import okData from "@/scripts/dev-data"
-import { type Address, type Rep } from '@/scripts/letter-state.js';
+import { type Address, type Envelope, type Rep } from '@/scripts/letter-state.js';
+import { signEnvelope } from "@/scripts/crypto";
 
 const isDev = import.meta.env.DEV;
 const apiKey = import.meta.env.FIVECALLS_API;
@@ -32,17 +33,35 @@ export default async function searchReps (origin: string, address: Address) {
         ? data['representatives'].filter((rep:any) => rep['area'] === 'US Senate') 
         : []);
     
-    reps = await Promise.all(reps.map(async (rep: Rep) => { 
-        const state = rep['state'];
+    reps = reps.map((rep: Record<string, string>) => {
         const last = rep['name'].split(' ').slice(1).join("_");
-        const response = await fetch(new URL(`/api/office_${last}_${state}.json`, origin));
+        return {
+            id: `${last}_${rep.state}`,
+            fullName: rep['name'],
+            salutation: rep['name'],
+            photoURL: rep['photoURL'],
+            state: rep['state'],
+            office: "unknown",
+        };
+    });
+
+    reps = await Promise.all(reps.map(async (rep: Rep) => {
+        // see if we have authoritative data from the cached phonebook
+        const response = await fetch(new URL(`/api/office_${rep.id}.json`, origin));
         if (response.ok) {
             const details = await response.json();
-            rep["name"] = details["fullname"];
-            rep["street"] = details["office"];
+            rep.fullName  = details["fullname"];
+            rep.salutation = details["lastname"];
+            rep.office = details["office"];
         }
         return rep;
     }));
-    
-    return(reps);
+
+    var envelope: Envelope = {
+        address: address,
+        reps: reps,
+        signature: "",
+    };
+    envelope.signature = signEnvelope(envelope);
+    return(envelope);
 }
