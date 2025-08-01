@@ -1,12 +1,49 @@
 import PDFDocument from 'pdfkit';
 import { type Address, type Rep } from '@/scripts/letter-state.js';
 import { stateDecoder } from '@/scripts//states.ts';
+import crypto from "crypto";
+
+const FONT_SIZE = 14;
+const FOOTER_SIZE = 10;
+
+function footer(doc: typeof PDFDocument, prefix: string, pageNumber: number) {
+    let bottom = doc.page.margins.bottom;
+    doc.page.margins.bottom = 0;
+    doc.fontSize(FOOTER_SIZE);
+    const foot = `${prefix}-${pageNumber}`;
+    const width = doc.widthOfString(foot);
+    doc.text(foot,
+        doc.page.width - width - doc.page.margins.right,
+        doc.page.height - 50,
+        {
+            lineBreak: false
+        },
+    );
+    doc.fontSize(FONT_SIZE);
+    doc.text('', 50, 50);
+    doc.page.margins.bottom = bottom;
+}
 
 export default function letterToPdf(address: Address, rep: Rep, today: string, message: string, photo: string | null) {
     const postalCode = stateDecoder(address.state);
     const officeLine = rep.office !== "unknown" ? `${rep.office}\n`: "";
     const messageClean = message.replaceAll('\r', '');
     const margin = 72;
+    const buildingNumber = rep.office === "unknown" ? "UNK" : rep.office.substring(0, 3);
+    const buildingInitial = rep.office === "unknown" ? 'X' : rep.office[4];
+    const senatorId = rep.id.replace(/_/g,'-');
+    const authorId = crypto.createHash('sha256')
+        .update(address.name)
+        .update(address.street)
+        .update(address.city)
+        .update(address.state)
+        .update(address.zipcode)
+        .update(today)
+        .digest('hex')
+        .substring(0, 5);
+    var pageNumber = 1;
+
+    const foot = `${buildingNumber}-${buildingInitial}-${senatorId}-${authorId}`;
 
     const doc = new PDFDocument({
         size: 'LETTER',
@@ -17,8 +54,15 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
         },
         margin: margin,
     });
-    
-    doc.fontSize(14);
+
+    doc.fontSize(FONT_SIZE);
+
+    footer(doc, foot, pageNumber);
+    doc.on('pageAdded', () => {
+        pageNumber ++;
+        footer(doc, foot, pageNumber);
+    });
+
     doc.moveDown(2.0);
 
     let line1 = address.name;
