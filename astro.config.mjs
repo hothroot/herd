@@ -28,6 +28,7 @@ export default defineConfig({
       FIVECALLS_API: envField.string({ context: "server", access:"secret" }),
       SERVICE_KEY: envField.string({ context: "server", access:"secret" }),
       DRIVE_ID: envField.string({ context: "server", access:"secret" }),
+      // random, generate with `openssl rand -hex N`, or use any string for dev
       ENVELOPE_KEY: envField.string({ context: "server", access:"secret" }),
     }
   },
