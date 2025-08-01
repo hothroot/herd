@@ -6,8 +6,8 @@ import crypto from "crypto";
 const FONT_SIZE = 14;
 const FOOTER_SIZE = 10;
 
-function footer(doc: typeof PDFDocument, prefix: string, pageNumber: number) {
-    let bottom = doc.page.margins.bottom;
+function footer(doc: typeof PDFDocument, fontSize: number, prefix: string, pageNumber: number) {
+    var bottom = doc.page.margins.bottom;
     doc.page.margins.bottom = 0;
     doc.fontSize(FOOTER_SIZE);
     const foot = `${prefix}-${pageNumber}`;
@@ -19,7 +19,7 @@ function footer(doc: typeof PDFDocument, prefix: string, pageNumber: number) {
             lineBreak: false
         },
     );
-    doc.fontSize(FONT_SIZE);
+    doc.fontSize(fontSize);
     doc.text('', 50, 50);
     doc.page.margins.bottom = bottom;
 }
@@ -42,6 +42,7 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
         .digest('hex')
         .substring(0, 5);
     var pageNumber = 1;
+    var fontSize = FONT_SIZE;
 
     const foot = `${buildingNumber}-${buildingInitial}-${senatorId}-${authorId}`;
 
@@ -55,12 +56,12 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
         margin: margin,
     });
 
-    doc.fontSize(FONT_SIZE);
+    doc.fontSize(fontSize);
 
-    footer(doc, foot, pageNumber);
+    footer(doc, fontSize, foot, pageNumber);
     doc.on('pageAdded', () => {
         pageNumber ++;
-        footer(doc, foot, pageNumber);
+        footer(doc, fontSize, foot, pageNumber);
     });
 
     doc.moveDown(2.0);
@@ -81,10 +82,10 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
             indent: addressIndent,
         }
     );
-    doc.moveDown(2.0);
+    doc.moveDown(1.0);
 
     doc.text(today);
-    doc.moveDown(2.0);
+    doc.moveDown(1.0);
     doc.text(
         `The Honorable ${rep.fullName}\n` +
         `United States Senate\n` +
@@ -95,7 +96,19 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
 
     doc.text(`Dear Senator ${rep.salutation},`); doc.moveDown();
 
+    var spaceRemaining = (doc.page.height
+        - doc.page.margins.bottom
+        - doc.y
+        - 5 * doc.currentLineHeight()
+    );
+    while (doc.heightOfString(messageClean) > spaceRemaining) {
+        fontSize *= 0.95;
+        doc.fontSize(fontSize);
+    }
     doc.text(messageClean); doc.moveDown();
+    
+    fontSize = FONT_SIZE;
+    doc.fontSize(fontSize);
 
     if (photo) {
         doc.image(photo, 250, doc.y, {width: 50});
