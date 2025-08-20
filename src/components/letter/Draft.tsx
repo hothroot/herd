@@ -14,12 +14,15 @@ const today = new Date().toLocaleString('default', {
     month: 'long',
     year: 'numeric',
 });
+const maxMessageLength = 1000;
+const redMessageLength = 0.9 * maxMessageLength;
+const yellowMessageLength = 0.75 * maxMessageLength;
+
+const messagePlaceholder = "On this occasion, I write to you on a topic of grave importance.";
 
 type Props = {
     envelope: Envelope,
 };
-
-
 
 export default function Draft(props: Props) {
     const envelope = props.envelope;
@@ -32,6 +35,14 @@ export default function Draft(props: Props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [headshotData, setHeadshotData] = useState("");
     const [headshotSource, setheadshotSource] = useState(profileRef.src);
+    const [messageContent, setInputValue] = useState('');
+    const [messageLength, setMessageLength] = useState(0);
+
+    function handleMessageChange(event: { target: { value: any; }; }) {
+        const text = event.target.value;
+        setInputValue(text);
+        setMessageLength(text.length);
+    };
 
     function handleSubmit() {
         setIsSubmitting(true);
@@ -108,8 +119,20 @@ export default function Draft(props: Props) {
                 </div>
             </div>
             <div className="grid w-full gap-2 h-48">
-                <Textarea id="message" name="message"
-                    placeholder="On this occasion, I write to you on a topic of grave importance." />
+                <textarea id="message" name="message" maxLength={maxMessageLength}
+                    autoFocus={true}
+                    value={messageContent}
+                    onChange={handleMessageChange}
+                    placeholder={messagePlaceholder} />
+            </div>
+            <div className={[
+                'flex',
+                'justify-end',
+                messageLength > redMessageLength ? 'text-red-600' :
+                messageLength > yellowMessageLength ? 'text-yellow-600' :
+                'text-black'
+            ].join(' ')}>
+                {messageLength} / {maxMessageLength}
             </div>
             <div className="flow-root">
                 <div className="w-2/3 md:w-1/2 md:float-right">
