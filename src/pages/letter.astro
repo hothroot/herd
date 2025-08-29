@@ -45,6 +45,9 @@ if (Astro.request.method === 'POST') {
         let photoData: string | null = formToString(formData.get("headshot-data"));
         if (!photoData.startsWith("data:image/png")) {
             photoData = null;
+            console.log("creating letter without photo");
+        } else {
+            console.log("creating letter with photo");
         }
         const store = new StorageApi();
         const letters = reps.map((rep: Rep) => {
@@ -55,6 +58,7 @@ if (Astro.request.method === 'POST') {
         });
         links = await store.uploadLetters(letters);
         isDone = true; 
+        console.log("letter uploaded");
     } else {
         var address = { 
             name: formToString(formData.get("name")),
@@ -64,7 +68,7 @@ if (Astro.request.method === 'POST') {
             zipcode: formToString(formData.get("zipcode")),
         }
         envelope = await searchReps(Astro.url.origin, address);
-        console.log(envelope);
+        console.log("created letter envelope");
         isDraft = true;
     }
 }
@@ -72,6 +76,6 @@ if (Astro.request.method === 'POST') {
 <BaseLayout pageTitle={pageTitle}>
     {isGet   && <AddressForm client:load /> }
     {isDraft && <Draft envelope={envelope} client:load /> } 
-    {isDone && isValidEnvelope && <Receipt links={links} /> }
-    {isDone && !isValidEnvelope && <Error /> }
+    {isDone  && isValidEnvelope  && <Receipt links={links} /> }
+    {isDone  && !isValidEnvelope && <Error /> }
 </BaseLayout>
