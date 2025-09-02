@@ -18,4 +18,4 @@ export type Envelope = {
     address: Address;
     reps: Reps;
     signature: string;
-};
+} | null;

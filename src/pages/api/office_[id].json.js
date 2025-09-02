@@ -12,7 +12,7 @@ import xml2js from "xml2js";
 const request = await fetch('https://www.senate.gov/general/contact_information/senators_cfm.xml')
 const phonebookXml = await request.text();
 var phonebook = {};
-xml2js.parseString(phonebookXml, function (err, result) {
+xml2js.parseString(phonebookXml, function (_err, result) {
     phonebook = result;
 });
 const officeData = phonebook.contact_information.member.map(member => {
@@ -30,7 +30,7 @@ const officeData = phonebook.contact_information.member.map(member => {
 });
 const offices = new Map(officeData);
 
-export const GET = ({ params, request }) => {
+export const GET = ({ params }) => {
   const id = params.id ? params.id : "unknown";
 
   return new Response(

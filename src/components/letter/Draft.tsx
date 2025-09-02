@@ -1,9 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-
-import { type Envelope, type Address, type Reps, type Rep} from '@/scripts/letter-state.js';
+import { type Envelope, type Rep } from '@/scripts/letter-state.js';
 import profileRef from '../../assets/profile.png';
 
 import React, { useRef, useState } from "react";
@@ -26,8 +24,8 @@ type Props = {
 
 export default function Draft(props: Props) {
     const envelope = props.envelope;
-    const address = envelope.address;
-    const reps = envelope.reps;
+    const address = envelope!.address;
+    const reps = envelope!.reps;
 
     const headshot = useRef<HTMLImageElement>(null);
     const uploadInput = useRef<HTMLInputElement>(null);
@@ -104,8 +102,8 @@ export default function Draft(props: Props) {
             <div className="flow-root">
                 <div className="w-2/3 md:w-1/2 md:float-left">
                     <div className="flex flex-row">
-                        {reps.map((rep: { [x: string]: string; }) =>
-                            <img className="w-1/3 m-1" src={rep['photoURL']} alt={rep['name']} key={rep['name']}/>
+                        {reps.map((rep: Rep) =>
+                            <img className="w-1/3 m-1" src={rep.photoURL} alt={rep.fullName} key={rep.id}/>
                         )}
                     </div>
                     <p>
@@ -153,6 +151,7 @@ export default function Draft(props: Props) {
                     <Button type="button"
                             id="image-upload-button"
                             onClick={initiateUpload}
+                            key="image_upload"
                             >
                         Choose Photo
                     </Button>
