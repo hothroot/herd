@@ -15,6 +15,10 @@ import { validateEnvelope } from "@/scripts/crypto";
 import { type Envelope } from '@/scripts/letter-state.js';
 
 import { USE_CAPTCHA } from "astro:env/server";
+import { SHOW_CAPTCHA } from "astro:env/client";
+
+// don't validate captcha unless we're showing it to the user
+const useCaptcha = SHOW_CAPTCHA && USE_CAPTCHA;
 
 const pageTitle = "Send a Letter";
 
@@ -50,10 +54,10 @@ if (Astro.request.method === 'POST') {
         } else if (envelope === null) {
             isValidSubmission = false;
             console.log("letter failed due to null envelope");
-        } else if (USE_CAPTCHA && (captchaToken === null || captchaToken === "")) {
+        } else if (useCaptcha && (captchaToken === null || captchaToken === "")) {
             isValidSubmission = false;
             console.log("letter failed due to missing captcha");
-        } else if (USE_CAPTCHA && !captchaIsValid) {
+        } else if (useCaptcha && !captchaIsValid) {
             isValidSubmission = false;
             console.log("letter failed due to invalid captcha");
         } else {

@@ -1,6 +1,6 @@
 "use client"
 
-import { RECAPTCHA_SITE_KEY } from "astro:env/client";
+import { RECAPTCHA_SITE_KEY, SHOW_CAPTCHA } from "astro:env/client";
 
 import { Button } from "@/components/ui/button"
 import { type Envelope, type Rep } from '@/scripts/letter-state.js';
@@ -36,7 +36,7 @@ export default function Draft(props: Props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [headshotData, setHeadshotData] = useState("");
     const [headshotSource, setheadshotSource] = useState(profileRef.src);
-    const [captchaData, setCaptchaData] = useState<string | null>(null);
+    const [captchaData, setCaptchaData] = useState<string | null>(SHOW_CAPTCHA ? null : "DISABLED");
     const [messageContent, setInputValue] = useState('');
     const [messageLength, setMessageLength] = useState(0);
 
@@ -183,10 +183,11 @@ export default function Draft(props: Props) {
                             <span> Submit </span>
                         )}
                     </Button>
-                    <ReCAPTCHA
-                        sitekey={RECAPTCHA_SITE_KEY}
-                        onChange={onCaptcha}
-                    />
+                    {SHOW_CAPTCHA && (
+                        <ReCAPTCHA
+                            sitekey={RECAPTCHA_SITE_KEY}
+                            onChange={onCaptcha}
+                        />)}
                     <input type="hidden" id="envelope" name="envelope" value={JSON.stringify(envelope)} />
                     <input type="hidden" id="today" name="today" value={today} />
                     <input type="hidden" id="headshot-data" name="headshot-data" value={headshotData} />
