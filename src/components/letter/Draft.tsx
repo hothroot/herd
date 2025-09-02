@@ -1,8 +1,11 @@
 "use client"
 
+import { RECAPTCHA_SITE_KEY } from "astro:env/client";
+
 import { Button } from "@/components/ui/button"
 import { type Envelope, type Rep } from '@/scripts/letter-state.js';
 import profileRef from '../../assets/profile.png';
+import ReCAPTCHA from "react-google-recaptcha";
 
 import React, { useRef, useState } from "react";
 
@@ -33,6 +36,7 @@ export default function Draft(props: Props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [headshotData, setHeadshotData] = useState("");
     const [headshotSource, setheadshotSource] = useState(profileRef.src);
+    const [captchaData, setCaptchaData] = useState<string | null>(null);
     const [messageContent, setInputValue] = useState('');
     const [messageLength, setMessageLength] = useState(0);
 
@@ -83,6 +87,9 @@ export default function Draft(props: Props) {
             }
             reader.readAsDataURL(e.target.files[0]);
         }
+    }
+    function onCaptcha(token: string | null) {
+        setCaptchaData(token);
     }
 
     return (
@@ -162,20 +169,28 @@ export default function Draft(props: Props) {
                     <p>
                         {address.name}
                     </p>
-                    <Button type="submit" disabled={isSubmitting} className="flex items-center justify-center px-4 py-2">
+                    <Button type="submit" disabled={isSubmitting || captchaData === null} className="flex items-center justify-center px-4 py-2">
                         {isSubmitting && (
                             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                             </svg>
                         )}
-                        {!isSubmitting && (
+                        {!isSubmitting && captchaData === null && (
+                            <span> Please Verify </span>
+                        )}
+                        {!isSubmitting && captchaData !== null && (
                             <span> Submit </span>
                         )}
                     </Button>
+                    <ReCAPTCHA
+                        sitekey={RECAPTCHA_SITE_KEY}
+                        onChange={onCaptcha}
+                    />
                     <input type="hidden" id="envelope" name="envelope" value={JSON.stringify(envelope)} />
                     <input type="hidden" id="today" name="today" value={today} />
                     <input type="hidden" id="headshot-data" name="headshot-data" value={headshotData} />
+                    <input type="hidden" id="captcha-data" name="captcha-data" value={captchaData ? captchaData : ""} />
                 </div>
             </div>
         </form>

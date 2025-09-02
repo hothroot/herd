@@ -30,6 +30,9 @@ export default defineConfig({
       DRIVE_ID: envField.string({ context: "server", access:"secret" }),
       // random, generate with `openssl rand -hex N`, or use any string for dev
       ENVELOPE_KEY: envField.string({ context: "server", access:"secret" }),
+      USE_CAPTCHA: envField.boolean({ context: "server", access:"public", default: true }),
+      RECAPTCHA_SITE_KEY: envField.string({ context: "client", access:"public" }),
+      RECAPTCHA_SECRET_KEY: envField.string({ context: "server", access:"secret" }),
     }
   },
 

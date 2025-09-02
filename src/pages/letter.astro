@@ -9,11 +9,12 @@ import Error from '../components/letter/Error.astro';
 import { type Rep } from '@/scripts/letter-state.js';
 import searchReps from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
+import validateCaptcha from '@/scripts/recaptcha.js';
 import { StorageApi } from '@/scripts/letter-store.js';
 import { validateEnvelope } from "@/scripts/crypto";
 import { type Envelope } from '@/scripts/letter-state.js';
 
-import { RECAPTCHA_SITE_KEY } from "astro:env/client";
+import { USE_CAPTCHA } from "astro:env/server";
 
 const pageTitle = "Send a Letter";
 
@@ -21,7 +22,7 @@ var links: Array<string> =[];
 var isGet = true;
 var isDraft = false;
 var isDone = false;
-var isValidEnvelope = false;
+var isValidSubmission = false;
 
 function formToString(value: FormDataEntryValue | null) {
     if (value === null) {
@@ -40,13 +41,21 @@ if (Astro.request.method === 'POST') {
     const formData = await Astro.request.formData();
     if (formData.has("envelope")) {
         envelope = JSON.parse(formToString(formData.get("envelope"))) as Envelope;
-        isValidEnvelope = validateEnvelope(envelope);
+        var captchaToken: string | null = formToString(formData.get("captcha-data"));
+        var captchaIsValid = await validateCaptcha(captchaToken);
+        isValidSubmission = validateEnvelope(envelope);
         isDone = true; 
-        if (!isValidEnvelope) {
+        if (!isValidSubmission) {
             console.log("letter failed due to invalid envelope signature ");
         } else if (envelope === null) {
-            isValidEnvelope = false;
+            isValidSubmission = false;
             console.log("letter failed due to null envelope");
+        } else if (USE_CAPTCHA && (captchaToken === null || captchaToken === "")) {
+            isValidSubmission = false;
+            console.log("letter failed due to missing captcha");
+        } else if (USE_CAPTCHA && !captchaIsValid) {
+            isValidSubmission = false;
+            console.log("letter failed due to invalid captcha");
         } else {
             const address = envelope!.address;
             const reps = envelope!.reps;
@@ -85,7 +94,7 @@ if (Astro.request.method === 'POST') {
 ---
 <BaseLayout pageTitle={pageTitle} >
     {isGet   && <AddressForm client:load /> }
-    {isDraft && <Draft envelope={envelope} client:load /> } 
-    {isDone  && isValidEnvelope  && <Receipt links={links} /> }
-    {isDone  && !isValidEnvelope && <Error /> }
+    {isDraft && <Draft envelope={envelope} client:load client:only="react"/> } 
+    {isDone  && isValidSubmission  && <Receipt links={links} /> }
+    {isDone  && !isValidSubmission && <Error /> }
 </BaseLayout>
