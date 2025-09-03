@@ -6,20 +6,27 @@ import Draft from '../components/letter/Draft';
 import Receipt from '../components/letter/Receipt.astro';
 import Error from '../components/letter/Error.astro';
 
-import { type Address, type Reps, type Rep } from '@/scripts/letter-state.js';
+import { type Rep } from '@/scripts/letter-state.js';
 import searchReps from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
+import validateCaptcha from '@/scripts/recaptcha.js';
 import { StorageApi } from '@/scripts/letter-store.js';
 import { validateEnvelope } from "@/scripts/crypto";
+import { type Envelope } from '@/scripts/letter-state.js';
+
+import { USE_CAPTCHA } from "astro:env/server";
+import { SHOW_CAPTCHA } from "astro:env/client";
+
+// don't validate captcha unless we're showing it to the user
+const useCaptcha = SHOW_CAPTCHA && USE_CAPTCHA;
 
 const pageTitle = "Send a Letter";
 
-var reps: Reps = [];
 var links: Array<string> =[];
 var isGet = true;
 var isDraft = false;
 var isDone = false;
-var isValidEnvelope = false;
+var isValidSubmission = false;
 
 function formToString(value: FormDataEntryValue | null) {
     if (value === null) {
@@ -31,34 +38,50 @@ function formToString(value: FormDataEntryValue | null) {
     return "";
 }
 
+var envelope : Envelope = null;
+
 if (Astro.request.method === 'POST') {
     isGet = false;
     const formData = await Astro.request.formData();
-    var envelope;
     if (formData.has("envelope")) {
-        var envelope = JSON.parse(formToString(formData.get("envelope")));
-        isValidEnvelope = validateEnvelope(envelope);
-        const address = envelope.address;
-        const reps = envelope.reps
-        const message = formToString(formData.get("message"));
-        const today = formToString(formData.get("today"));
-        let photoData: string | null = formToString(formData.get("headshot-data"));
-        if (!photoData.startsWith("data:image/png")) {
-            photoData = null;
-            console.log("creating letter without photo");
-        } else {
-            console.log("creating letter with photo");
-        }
-        const store = new StorageApi();
-        const letters = reps.map((rep: Rep) => {
-            return {
-                filename: `${rep.salutation} - ${today} - ${address.name}.pdf`,
-                data: letterToPdf(address, rep, today, message, photoData),
-            }
-        });
-        links = await store.uploadLetters(letters);
+        envelope = JSON.parse(formToString(formData.get("envelope"))) as Envelope;
+        var captchaToken: string | null = formToString(formData.get("captcha-data"));
+        var captchaIsValid = await validateCaptcha(captchaToken);
+        isValidSubmission = validateEnvelope(envelope);
         isDone = true; 
-        console.log("letter uploaded");
+        if (!isValidSubmission) {
+            console.log("letter failed due to invalid envelope signature ");
+        } else if (envelope === null) {
+            isValidSubmission = false;
+            console.log("letter failed due to null envelope");
+        } else if (useCaptcha && (captchaToken === null || captchaToken === "")) {
+            isValidSubmission = false;
+            console.log("letter failed due to missing captcha");
+        } else if (useCaptcha && !captchaIsValid) {
+            isValidSubmission = false;
+            console.log("letter failed due to invalid captcha");
+        } else {
+            const address = envelope!.address;
+            const reps = envelope!.reps;
+            const message = formToString(formData.get("message"));
+            const today = formToString(formData.get("today"));
+            let photoData: string | null = formToString(formData.get("headshot-data"));
+            if (!photoData.startsWith("data:image/png")) {
+                photoData = null;
+                console.log("creating letter without photo");
+            } else {
+                console.log("creating letter with photo");
+            }
+            const store = new StorageApi();
+            const letters = reps.map((rep: Rep) => {
+                return {
+                    filename: `${rep.salutation} - ${today} - ${address.name}.pdf`,
+                    data: letterToPdf(address, rep, today, message, photoData),
+                }
+            });
+            links = await store.uploadLetters(letters);
+            console.log("letter uploaded");
+        }
     } else {
         var address = { 
             name: formToString(formData.get("name")),
@@ -73,9 +96,9 @@ if (Astro.request.method === 'POST') {
     }
 }
 ---
-<BaseLayout pageTitle={pageTitle}>
+<BaseLayout pageTitle={pageTitle} >
     {isGet   && <AddressForm client:load /> }
-    {isDraft && <Draft envelope={envelope} client:load /> } 
-    {isDone  && isValidEnvelope  && <Receipt links={links} /> }
-    {isDone  && !isValidEnvelope && <Error /> }
+    {isDraft && <Draft envelope={envelope} client:load client:only="react"/> } 
+    {isDone  && isValidSubmission  && <Receipt links={links} /> }
+    {isDone  && !isValidSubmission && <Error /> }
 </BaseLayout>
