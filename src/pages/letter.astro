@@ -7,12 +7,12 @@ import Receipt from '../components/letter/Receipt.astro';
 import Error from '../components/letter/Error.astro';
 
 import { type Rep } from '@/scripts/letter-state.js';
-import searchReps from '@/scripts/search-reps.ts';
+import { searchReps } from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
 import validateCaptcha from '@/scripts/recaptcha.js';
 import { StorageApi } from '@/scripts/letter-store.js';
 import { validateEnvelope } from "@/scripts/crypto";
-import { type Envelope } from '@/scripts/letter-state.js';
+import { type Envelope, isAddressValid } from '@/scripts/letter-state.js';
 
 import { USE_CAPTCHA } from "astro:env/server";
 import { SHOW_CAPTCHA } from "astro:env/client";
@@ -90,9 +90,14 @@ if (Astro.request.method === 'POST') {
             state: formToString(formData.get("state")),
             zipcode: formToString(formData.get("zipcode")),
         }
-        envelope = await searchReps(Astro.url.origin, address);
-        console.log("created letter envelope");
-        isDraft = true;
+        if (isAddressValid(address)) {
+            envelope = await searchReps(Astro.url.origin, address);
+            console.log("created letter envelope");
+            isDraft = true;
+        } else {
+            isDone = true;
+            isValidSubmission = false;
+        }
     }
 }
 ---

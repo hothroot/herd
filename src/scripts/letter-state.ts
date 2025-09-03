@@ -1,3 +1,5 @@
+import { allStateNamesAndCodes, zipRegExp } from "@/scripts/states"
+
 export type Address = {   
     name: string;
     street: string;
@@ -19,3 +21,11 @@ export type Envelope = {
     reps: Reps;
     signature: string;
 } | null;
+
+export function isAddressValid(address: Address) {
+    return (
+        address["name"].length > 0 &&
+        allStateNamesAndCodes.includes(address["state"].toUpperCase()) &&
+        address["zipcode"].match(zipRegExp)
+    );
+}
