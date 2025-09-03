@@ -23,3 +23,15 @@ test('button becomes enabled with valid input', async ({ page }) => {
     // flaky on chromium and mobile safari, why?
     await expect(page.locator('#submit')).toBeEnabled();
 });
+
+test('button remains disabled with invalid input', async ({ page }) => {
+    await page.goto('/letter');
+
+    await page.locator('input[name="name"]').fill('John Doe');
+    await page.locator('input[name="street"]').fill('123 Main Street');
+    await page.locator('input[name="city"]').fill('Springfield');
+    await page.locator('input[name="state"]').fill('Mashichsetts');
+    await page.locator('input[name="zipcode"]').fill('0202');
+
+    await expect(page.locator('#submit')).toBeDisabled();
+});
