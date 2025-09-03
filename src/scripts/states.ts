@@ -95,3 +95,8 @@ export function stateDecoder(probe: string) : string {
     }
     return decoder[ucProbe];
 }
+
+export const allStateNamesAndCodes = Object.keys(states).map(
+  (key) => [key, states[key]["name"].toUpperCase()]).flat();
+  
+export const zipRegExp = /(^\d{5}$)|(^\d{5}-\d{4}$)/;

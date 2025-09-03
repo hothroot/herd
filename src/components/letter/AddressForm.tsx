@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { states } from "@/scripts/states"
+import { allStateNamesAndCodes, zipRegExp } from "@/scripts/states"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,12 +15,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-const allStates = Object.keys(states).map(
-  (key) => [key, states[key]["name"].toUpperCase()]).flat();
 const StateSchema = 
   z.string()
   .refine(
-      (state) => allStates.includes(state.toUpperCase()),
+      (state) => allStateNamesAndCodes.includes(state.toUpperCase()),
       `State must be a two-letter postal code or the full state name`
     );
 const AddressSchema = z.object({
@@ -30,13 +28,13 @@ const AddressSchema = z.object({
   street: z.string(),
   city: z.string(),
   state: StateSchema,
-  zipcode: z.string().regex(/(^\d{5}$)|(^\d{5}-\d{4}$)/),
+  zipcode: z.string().regex(zipRegExp),
 });
 
 export default function AddressForm() {
   const form = useForm<z.infer<typeof AddressSchema>>({
     resolver: zodResolver(AddressSchema),
-    mode: 'all',
+    mode: 'onChange',
     defaultValues: {
       name: "",
       street: "",
@@ -45,6 +43,7 @@ export default function AddressForm() {
       zipcode: "",
     },
   })
+  const { isSubmitting, isValid } = form.formState;
 
   return (
     <Form {...form}>
@@ -116,7 +115,17 @@ export default function AddressForm() {
             )}
           />
           </div>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" id="submit" disabled={!isValid}>
+          {isSubmitting && (
+            <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+          )}
+          {!isSubmitting && (
+              <span> Submit </span>
+          )}
+        </Button>
       </form>
     </Form>
   )

@@ -5,7 +5,7 @@ import { signEnvelope } from "@/scripts/crypto";
 const isDev = import.meta.env.DEV;
 const apiKey = import.meta.env.FIVECALLS_API;
 
-export default async function searchReps (origin: string, address: Address) {
+export async function searchReps (origin: string, address: Address) {
     var data = undefined;
     if (isDev && address["name"] !== "fetch") {
         if (address["name"] === "error") {
