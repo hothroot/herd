@@ -4,12 +4,24 @@ interface Props {
 }
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { GTAG } from "astro:env/client";
+
 import '../styles/global.css';
 const { pageTitle } = Astro.props;
+
+const gtagURL = `https://www.googletagmanager.com/gtag/js?id=${GTAG}`;
 ---
 
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src={gtagURL}></script>
+    <script define:vars={{GTAG}}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', GTAG);
+    </script>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
@@ -17,6 +29,7 @@ const { pageTitle } = Astro.props;
     <link rel='stylesheet' id='avada_google_fonts-css'  href='https://fonts.googleapis.com/css?family=PT+Sans%3A400%7CRaleway%3A400%7CQuicksand%3A400%7CCabin%3A400&#038;subset=latin' type='text/css' media='all' />
   <title>{pageTitle}</title>
   </head>
+  
   <body>
      
   <Header />

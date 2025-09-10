@@ -34,6 +34,7 @@ export default defineConfig({
       SHOW_CAPTCHA: envField.boolean({ context: "client", access:"public", default: true }),
       RECAPTCHA_SITE_KEY: envField.string({ context: "client", access:"public" }),
       RECAPTCHA_SECRET_KEY: envField.string({ context: "server", access:"secret" }),
+      GTAG: envField.string({ context: "client", access:"public" }),
     }
   },
 
