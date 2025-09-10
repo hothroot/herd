@@ -23,7 +23,7 @@ const gtagURL = `https://www.googletagmanager.com/gtag/js?id=${GTAG}`;
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      if ({devMode}) {
+      if (devMode) {
         gtag('config', GTAG, { 'debug_mode':true });
       } else {
         gtag('config', GTAG); // n.b. debug_mode:false does not work
