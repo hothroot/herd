@@ -26,6 +26,7 @@
     "@types/react-dom": "^19.1.5",
     "astro": "^5.8.1",
     "astro-carousel": "^3.0.2",
+    "astro-robots-txt": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",

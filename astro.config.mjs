@@ -1,17 +1,31 @@
 // @ts-check
 import { defineConfig, envField } from 'astro/config';
 
-import tailwindcss from "@tailwindcss/vite";
-
-import react from "@astrojs/react";
-
 import netlify from "@astrojs/netlify";
-
+import react from "@astrojs/react";
+import robotsTxt from 'astro-robots-txt';
 import sitemap from "@astrojs/sitemap";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    sitemap(),
+    robotsTxt({
+      sitemap: [
+        'https://herdonthehill.com/sitemap-index.xml',
+      ],
+      policy: [
+        {
+          userAgent: '*',
+          allow: '/',
+          disallow: '/letter',
+          crawlDelay: 10,
+        },
+      ],
+    }),
+  ],
   site: "https://herdonthehill.com/",
 
   vite: {

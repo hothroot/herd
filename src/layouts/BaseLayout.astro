@@ -5,10 +5,13 @@ interface Props {
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { GTAG } from "astro:env/client";
+import { STAGING } from "astro:env/server";
 
 import '../styles/global.css';
+
 const { pageTitle } = Astro.props;
 
+const devMode = STAGING || import.meta.env.DEV;
 const gtagURL = `https://www.googletagmanager.com/gtag/js?id=${GTAG}`;
 ---
 
@@ -16,11 +19,15 @@ const gtagURL = `https://www.googletagmanager.com/gtag/js?id=${GTAG}`;
   <head>
     <!-- Google tag (gtag.js) -->
     <script async src={gtagURL}></script>
-    <script define:vars={{GTAG}}>
+    <script define:vars={{GTAG, devMode}}>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', GTAG);
+      if (devMode) {
+        gtag('config', GTAG, { 'debug_mode':true });
+      } else {
+        gtag('config', GTAG); // n.b. debug_mode:false does not work
+      }
     </script>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
