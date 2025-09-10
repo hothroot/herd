@@ -245,7 +245,12 @@ h1 {
     @apply bg-background text-foreground;
   }
 }
-
+#graybar {
+    width: 100%;
+    background: #dddddd;
+    text-align: center;
+    padding: 1em;
+}
 #butterbar {
     width: 100%;
     background: #ddd84b;
