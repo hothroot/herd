@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig, envField } from 'astro/config';
 
+import compressor from "astro-compressor";
 import netlify from "@astrojs/netlify";
 import react from "@astrojs/react";
 import robotsTxt from 'astro-robots-txt';
@@ -9,6 +10,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://www.herdonthehill.com/",
   integrations: [
     react(),
     sitemap(),
@@ -24,9 +26,8 @@ export default defineConfig({
           crawlDelay: 10,
         },
       ],
-    }),
-  ],
-  site: "https://herdonthehill.com/",
+      }),
+    compressor()],
 
   vite: {
     plugins: [tailwindcss()],
@@ -35,6 +36,8 @@ export default defineConfig({
   prefetch: {
     defaultStrategy: 'viewport',
   },
+
+  compressHTML: true,
 
   env: {
     schema: {
