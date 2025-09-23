@@ -39,7 +39,7 @@ export default function Draft(props: Props) {
     const [captchaData, setCaptchaData] = useState<string | null>(SHOW_CAPTCHA ? null : "DISABLED");
     const [messageContent, setInputValue] = useState('');
     const [messageLength, setMessageLength] = useState(0);
-
+    
     function handleMessageChange(event: { target: { value: any; }; }) {
         const text = event.target.value;
         setInputValue(text);
