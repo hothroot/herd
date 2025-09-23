@@ -47,6 +47,26 @@ export default function AddressForm() {
 
   return (
     <Form {...form}>
+      <p>
+        Complete the information below to generate letters to your Senators. Herd on the Hill volunteers in DC will print the letter and deliver it to your senators’ D.C. offices, engaging with staff, legislative aides and/or the senator her/himself, if possible. 
+      </p>
+
+      <p>
+        Need help writing a letter? Please check out our FAQs [link opens in a new window].
+      </p>
+
+      <p>
+        Quick tips: Be concise, polite, and personal. Aim for two to three paragraphs, tops. No profanity, insults, or threats.
+      </p>
+
+      <p>
+        Photos: Personalize your letter and make it stand out with a photo of you, your family, your friends, or your community.
+      </p>
+
+      <p>
+        Once we get your letter, we’ll add it to our next visit to Capitol Hill. While we make every effort to deliver your letter, we cannot guarantee delivery, or delivery by a certain date. Unfortunately, we cannot confirm whether a delivery is made. 
+      </p>
+
       <form method="POST" className="w-2/3 space-y-6">
         <FormField
           control={form.control}
