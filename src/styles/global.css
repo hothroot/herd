@@ -14,17 +14,16 @@
 
 @layer base {
   a {
-    @apply  underline text-blue-900
+    @apply underline text-blue-900
   }
   h1 {
-    @apply text-2xl;
+    @apply text-3xl;
   }
   h2 {
     @apply text-xl;
   }
   h3 {
-    @apply text-lg;
-    font-weight: 700;
+    @apply text-lg font-bold;
   }
   ul {
     @apply list-inside list-disc p-2;
@@ -33,7 +32,7 @@
     @apply p-2;
   }
   b {
-    font-weight: 700;
+    @apply font-bold;
   }
   blockquote {
     margin-left: 2em;
@@ -68,12 +67,10 @@ body {
 
 h1 {
   margin: 1rem 0;
-  font-size: 2.5rem;
 }
 
 h2 {
   margin: 1rem 0;
-  font-size: 1.5rem;
 }
 
 .hamburger {

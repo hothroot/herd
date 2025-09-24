@@ -19,6 +19,13 @@ if (!photos[photoData[PILES_OF_LETTERS].imgPath]) throw new Error(`"${PILES_OF_L
 const pageTitle = "Amplifying Your Voice in Congress";
 ---
 <BaseLayout pageTitle={pageTitle}>
+  
+  <CallToAction />
+  
+  <LetterButton />
+  
+  <OnNeutrality />
+  
   <div class="mx-auto w-fit">
     <Image
       src={photos[photoData[ARMS_RAISED].imgPath]()}
@@ -27,13 +34,7 @@ const pageTitle = "Amplifying Your Voice in Congress";
       style="center"
       />
   </div>
-  
-  <CallToAction />
-  
-  <LetterButton />
-  
-  <OnNeutrality />
-  
+
   <SenatorsWorkForYou />
   
   <div class="mx-auto w-fit">
