@@ -52,7 +52,7 @@ export default function AddressForm() {
       </p>
 
       <p>
-        Need help writing a letter? Please check out our FAQs [link opens in a new window].
+        Need help writing a letter? Please check out our <a href="/tips" target="_blank">FAQs.</a>.
       </p>
 
       <p>

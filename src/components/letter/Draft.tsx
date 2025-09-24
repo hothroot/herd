@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { type Envelope, type Rep } from '@/scripts/letter-state.js';
 import profileRef from '../../assets/profile.png';
 import ReCAPTCHA from "react-google-recaptcha";
+import TextareaAutosize from 'react-textarea-autosize';
+
 
 import React, { useRef, useState } from "react";
 
@@ -123,9 +125,10 @@ export default function Draft(props: Props) {
                     )}
                 </div>
             </div>
-            <div className="grid w-full gap-2 h-48">
-                <textarea id="message" name="message" maxLength={maxMessageLength}
+            <div className="grid w-full gap-2 min-h-32 h-fit">
+                <TextareaAutosize id="message" name="message" maxLength={maxMessageLength}
                     autoFocus={true}
+                    minRows={7}
                     value={messageContent}
                     onChange={handleMessageChange}
                     placeholder={messagePlaceholder} />
