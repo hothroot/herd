@@ -135,6 +135,8 @@ export default function AddressForm() {
             )}
           />
           </div>
+
+        <p>Your address will be used to find your senators, and on the next page you will write the body fo your letter to them.</p>
         <Button type="submit" id="submit" disabled={!isValid}>
           {isSubmitting && (
             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">

@@ -15,6 +15,10 @@ export type Rep = {
     state: string;
     office: string;
 };
+export type Letter = {
+    url: string;
+    recipient: string;
+};
 export type Reps = Array<Rep>;
 export type Envelope = {
     address: Address;

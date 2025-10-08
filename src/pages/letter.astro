@@ -6,7 +6,7 @@ import Draft from '../components/letter/Draft';
 import Receipt from '../components/letter/Receipt.astro';
 import Error from '../components/letter/Error.astro';
 
-import { type Rep } from '@/scripts/letter-state.js';
+import { type Rep, type Letter } from '@/scripts/letter-state.js';
 import { searchReps } from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
 import validateCaptcha from '@/scripts/recaptcha.js';
@@ -22,7 +22,7 @@ const useCaptcha = SHOW_CAPTCHA && USE_CAPTCHA;
 
 const pageTitle = "Send a Letter";
 
-var links: Array<string> =[];
+var letters: Array<Letter> =[];
 var isGet = true;
 var isDraft = false;
 var isDone = false;
@@ -65,6 +65,7 @@ if (Astro.request.method === 'POST') {
             const reps = envelope!.reps;
             const message = formToString(formData.get("message"));
             const today = formToString(formData.get("today"));
+            const now = new Date().getTime();
             let photoData: string | null = formToString(formData.get("headshot-data"));
             if (!photoData.startsWith("data:image/png")) {
                 photoData = null;
@@ -73,13 +74,14 @@ if (Astro.request.method === 'POST') {
                 console.log("creating letter with photo");
             }
             const store = new StorageApi();
-            const letters = reps.map((rep: Rep) => {
+            const drafts = reps.map((rep: Rep) => {
                 return {
                     filename: `${rep.salutation} - ${today} - ${address.name}.pdf`,
-                    data: letterToPdf(address, rep, today, message, photoData),
+                    data: letterToPdf(address, rep, today, now, message, photoData),
+                    recipient: rep,
                 }
             });
-            links = await store.uploadLetters(letters);
+            letters = await store.uploadLetters(drafts);
             console.log("letter uploaded");
         }
     } else {
@@ -104,6 +106,6 @@ if (Astro.request.method === 'POST') {
 <BaseLayout pageTitle={pageTitle} >
     {isGet   && <AddressForm client:load /> }
     {isDraft && <Draft envelope={envelope} client:load client:only="react"/> } 
-    {isDone  && isValidSubmission  && <Receipt links={links} /> }
+    {isDone  && isValidSubmission  && <Receipt letters={letters} /> }
     {isDone  && !isValidSubmission && <Error /> }
 </BaseLayout>
