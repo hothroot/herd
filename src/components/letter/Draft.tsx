@@ -172,6 +172,11 @@ export default function Draft(props: Props) {
                     <p>
                         {address.name}
                     </p>
+                    {SHOW_CAPTCHA && (
+                        <ReCAPTCHA
+                            sitekey={RECAPTCHA_SITE_KEY}
+                            onChange={onCaptcha}
+                        />)}
                     <Button type="submit" disabled={isSubmitting || captchaData === null} className="flex items-center justify-center px-4 py-2">
                         {isSubmitting && (
                             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
@@ -186,11 +191,6 @@ export default function Draft(props: Props) {
                             <span> Submit </span>
                         )}
                     </Button>
-                    {SHOW_CAPTCHA && (
-                        <ReCAPTCHA
-                            sitekey={RECAPTCHA_SITE_KEY}
-                            onChange={onCaptcha}
-                        />)}
                     <input type="hidden" id="envelope" name="envelope" value={JSON.stringify(envelope)} />
                     <input type="hidden" id="today" name="today" value={today} />
                     <input type="hidden" id="headshot-data" name="headshot-data" value={headshotData} />

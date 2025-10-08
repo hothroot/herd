@@ -6,13 +6,20 @@ import crypto from "crypto";
 const FONT_SIZE = 14;
 const FOOTER_SIZE = 10;
 
-function footer(doc: typeof PDFDocument, fontSize: number, prefix: string, pageNumber: number) {
+function footer(doc: typeof PDFDocument, fontSize: number, letterId: string, buildingCode: string) {
     var bottom = doc.page.margins.bottom;
     doc.page.margins.bottom = 0;
     doc.fontSize(FOOTER_SIZE);
-    const foot = `${prefix}-${pageNumber}`;
+    const foot = `${buildingCode}`;
     const width = doc.widthOfString(foot);
-    doc.text(foot,
+    doc.text(letterId,
+        doc.page.margins.left,
+        doc.page.height - 50,
+        {
+            lineBreak: false
+        },
+    );
+    doc.text(buildingCode,
         doc.page.width - width - doc.page.margins.right,
         doc.page.height - 50,
         {
@@ -24,7 +31,7 @@ function footer(doc: typeof PDFDocument, fontSize: number, prefix: string, pageN
     doc.page.margins.bottom = bottom;
 }
 
-export default function letterToPdf(address: Address, rep: Rep, today: string, message: string, photo: string | null) {
+export default function letterToPdf(address: Address, rep: Rep, today: string, now: number, message: string, photo: string | null) {
     const postalCode = stateDecoder(address.state);
     const officeLine = rep.office !== "unknown" ? `${rep.office}\n`: "";
     const messageClean = message.replaceAll('\r', '');
@@ -32,20 +39,17 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
     const buildingNumber = rep.office === "unknown" ? "UNK" : rep.office.substring(0, 3);
     const buildingInitial = rep.office === "unknown" ? 'X' : rep.office[4];
     const senatorId = rep.id.replace(/_/g,'-');
-    const authorId = crypto.createHash('sha256')
+    const letterId = crypto.createHash('sha256')
         .update(address.name)
         .update(address.street)
         .update(address.city)
         .update(address.state)
         .update(address.zipcode)
-        .update(today)
+        .update(now.toString())
         .digest('hex')
-        .substring(0, 5);
-    var pageNumber = 1;
-    var fontSize = FONT_SIZE;
-
-    const foot = `${buildingNumber}-${buildingInitial}-${senatorId}-${authorId}`;
-
+        .substring(0, 8)
+        .toUpperCase();
+    const buildingCode = `${buildingNumber}-${buildingInitial}-${senatorId}`;
     const doc = new PDFDocument({
         size: 'LETTER',
         font: 'Times-Roman',
@@ -56,13 +60,10 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, m
         margin: margin,
     });
 
+    var fontSize = FONT_SIZE;
     doc.fontSize(fontSize);
 
-    footer(doc, fontSize, foot, pageNumber);
-    doc.on('pageAdded', () => {
-        pageNumber ++;
-        footer(doc, fontSize, foot, pageNumber);
-    });   
+    footer(doc, fontSize, letterId, buildingCode);
     
     var availableSpace = (doc.page.height
         - doc.page.margins.bottom

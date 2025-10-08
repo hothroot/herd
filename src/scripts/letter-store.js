@@ -140,7 +140,10 @@ export class StorageApi {
         supportsAllDrives: true,
       });
 
-      return `https://drive.google.com/file/d/${file.data.id}/view?usp=sharing`;
+      return {
+        'recipient' : letter.recipient.fullName,
+        'url': `https://drive.google.com/file/d/${file.data.id}/view?usp=sharing`,
+      };
     } catch (err) {
       throw err;
     }
