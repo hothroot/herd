@@ -5,6 +5,7 @@ export class DriveClient {
   constructor() {
     this.auth = undefined;
     this.drive = undefined;
+    this.sheets = undefined;
   }
 
   /**
@@ -18,6 +19,7 @@ export class DriveClient {
             this.auth = google.auth.fromJSON(keys);
             this.auth.scopes = ['https://www.googleapis.com/auth/drive'];
             this.drive =  google.drive({version: 'v3', auth: this.auth});
+            this.sheets =  google.sheets({version: 'v4', auth: this.auth});
         } catch (err) {
             console.log(err);
             throw err;
@@ -26,14 +28,25 @@ export class DriveClient {
   }
   
   /**
-   * find or create the folder.
+   * find or create a folder.
    */
   async findOrCreateFolder(name, parentId) {
+    return this.findOrCreateFile(
+        name,
+        'application/vnd.google-apps.folder',
+        parentId,
+    );
+  }
+  
+  /**
+   * find or create a file.
+   */
+  async findOrCreateFile(name, mimeType, parentId) {
     const drive = google.drive({version: 'v3', auth: this.auth});
     let queryTerms = [
       `name = '${name}'`,
       "trashed = false",
-      "mimeType = 'application/vnd.google-apps.folder'",
+      `mimeType = '${mimeType}'`,
     ];
     if (parentId) {
       queryTerms.push(`'${parentId}' in parents`);
@@ -54,7 +67,7 @@ export class DriveClient {
       // create the missing folder
       let fileMetadata = {
         name: name,
-        mimeType: 'application/vnd.google-apps.folder',
+        mimeType: mimeType,
       };
       if (parentId) {
         fileMetadata.parents = [parentId];
@@ -72,11 +85,15 @@ export class DriveClient {
     return files[0].id;
   }
 
-  async create_file(opts){
+  async createFile(opts) {
     return this.drive.files.create(opts);
   }
 
-  async create_permission(opts){
+  async createPermission(opts) {
     return this.drive.permissions.create(opts);
+  }
+
+  async appendRow(opts) {
+    return this.sheets.spreadsheets.values.append(opts);
   }
 }

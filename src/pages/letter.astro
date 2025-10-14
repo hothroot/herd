@@ -11,6 +11,7 @@ import { searchReps } from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
 import validateCaptcha from '@/scripts/recaptcha.js';
 import { LetterStorage } from '@/scripts/letter-store.js';
+import { Ledger } from '@/scripts/ledger-store.js';
 import { validateEnvelope } from "@/scripts/crypto";
 import { type Envelope, isAddressValid } from '@/scripts/letter-state.js';
 
@@ -75,6 +76,7 @@ if (Astro.request.method === 'POST') {
                 console.log("creating letter with photo");
             }
             const store = new LetterStorage();
+            const ledger = new Ledger();
             const drafts = reps.map((rep: Rep) => {
                  const letterId = crypto.createHash('sha256')
                     .update(address.name)
@@ -97,7 +99,10 @@ if (Astro.request.method === 'POST') {
                 }
             });
             letters = await store.uploadLetters(drafts);
+            const response = await ledger.recordLetters(drafts);
             console.log("letter uploaded");
+            console.log(response.ok);
+
         }
     } else {
         var address = { 

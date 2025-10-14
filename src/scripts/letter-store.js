@@ -51,7 +51,7 @@ export class LetterStorage {
     };
 
     try {
-      let file = await this.client.create_file({  // @ts-ignore await definitely does have an effect here
+      let file = await this.client.createFile({  // @ts-ignore await definitely does have an effect here
         requestBody: fileMetadata,
         media: media,
         fields: 'id',
@@ -60,7 +60,7 @@ export class LetterStorage {
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
       });
-      this.client.create_permission({
+      this.client.createPermission({
         fileId: file.data.id,
         requestBody: {
           type: "anyone",
