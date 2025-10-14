@@ -64,7 +64,7 @@ export default function AddressForm() {
       </p>
 
       <p>
-        Once we get your letter, we’ll add it to our next visit to Capitol Hill. While we make every effort to deliver your letter, we cannot guarantee delivery, or delivery by a certain date. Unfortunately, we cannot confirm whether a delivery is made. 
+        Once we get your letter, we'll add it to our next visit to Capitol Hill. While we make every effort to deliver your letter, as a volunteer group we cannot guarantee delivery, or delivery by a certain date. Unfortunately, we cannot confirm whether a delivery is made. 
       </p>
 
       <form method="POST" className="w-2/3 space-y-6">
@@ -136,7 +136,7 @@ export default function AddressForm() {
           />
           </div>
 
-        <p>Your address will be used to find your senators, and on the next page you will write the body fo your letter to them.</p>
+        <p>Your address will be used to find your senators, and on the next page you will write the body of your letter to them.</p>
         <Button type="submit" id="submit" disabled={!isValid}>
           {isSubmitting && (
             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
