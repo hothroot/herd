@@ -1,8 +1,7 @@
-import { google } from 'googleapis';
 import { DriveClient } from '@/scripts/google-drive';
 import { DRIVE_ID } from "astro:env/server";
 
-export class StorageApi {
+export class LetterStorage {
   constructor() {
     this.client = new DriveClient();
     this.weekId = undefined;

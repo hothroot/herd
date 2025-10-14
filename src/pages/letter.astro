@@ -10,12 +10,13 @@ import { type Rep, type Letter } from '@/scripts/letter-state.js';
 import { searchReps } from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
 import validateCaptcha from '@/scripts/recaptcha.js';
-import { StorageApi } from '@/scripts/letter-store.js';
+import { LetterStorage } from '@/scripts/letter-store.js';
 import { validateEnvelope } from "@/scripts/crypto";
 import { type Envelope, isAddressValid } from '@/scripts/letter-state.js';
 
 import { USE_CAPTCHA } from "astro:env/server";
 import { SHOW_CAPTCHA } from "astro:env/client";
+import crypto from "crypto";
 
 // don't validate captcha unless we're showing it to the user
 const useCaptcha = SHOW_CAPTCHA && USE_CAPTCHA;
@@ -73,11 +74,25 @@ if (Astro.request.method === 'POST') {
             } else {
                 console.log("creating letter with photo");
             }
-            const store = new StorageApi();
+            const store = new LetterStorage();
             const drafts = reps.map((rep: Rep) => {
+                 const letterId = crypto.createHash('sha256')
+                    .update(address.name)
+                    .update(address.street)
+                    .update(address.city)
+                    .update(address.state)
+                    .update(address.zipcode)
+                    .update(now.toString())
+                    .digest('hex')
+                    .substring(0, 8)
+                    .toUpperCase();
                 return {
                     filename: `${rep.salutation} - ${today} - ${address.name}.pdf`,
-                    data: letterToPdf(address, rep, today, now, message, photoData),
+                    data: letterToPdf(address, rep, today, letterId, message, photoData),
+                    address: address,
+                    today: today,
+                    message: message,
+                    hasPhoto: !!photoData,
                     recipient: rep,
                 }
             });
