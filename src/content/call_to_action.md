@@ -1,1 +1,1 @@
-**SPEAK UP. NOW.** At this pivotal junction in our nation’s history, we need all Americans of conscience to raise their voices against the rise of authoritarianism. Herd on the Hill volunteers carry your messages straight to your Congresspersons’ offices. To paraphrase Benjamin Franklin, we can have a republic if we can keep it!
+**SPEAK UP. NOW.** Americans of conscience need to raise their voices against the rise of authoritarianism. Herd on the Hill volunteers carry your messages straight to your Congresspersons’ offices.
