@@ -6,6 +6,7 @@ import { z } from "zod"
 import { allStateNamesAndCodes, zipRegExp } from "@/scripts/states"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -29,6 +30,9 @@ const AddressSchema = z.object({
   city: z.string(),
   state: StateSchema,
   zipcode: z.string().regex(zipRegExp),
+  email: z.string().email("Please include a valid email address so we can contact if there is a problem with your letter."),
+  subscribe: z.boolean(),
+  
 });
 
 export default function AddressForm() {
@@ -41,6 +45,8 @@ export default function AddressForm() {
       city: "",
       state: "",
       zipcode: "",
+      email: "",
+      subscribe: false,
     },
   })
   const { isSubmitting, isValid } = form.formState;
@@ -135,8 +141,36 @@ export default function AddressForm() {
             )}
           />
           </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="me@gmail.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="subscribe"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center space-x-2">
+                <FormLabel>Subscribe to newsletter: </FormLabel>
+                <FormControl>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <p>Your address will be used to find your senators, and on the next page you will write the body of your letter to them.</p>
+        <p>All fields are required. Your address will be used to find your senators. 
+          Your email address will be used to contact you if there is a problem with delivering your letter. </p>
+        <p> On the next page you will write the body of your letter to them.</p>
         <Button type="submit" id="submit" disabled={!isValid}>
           {isSubmitting && (
             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">

@@ -40,6 +40,10 @@ function formToString(value: FormDataEntryValue | null) {
     return "";
 }
 
+function formToBoolean(value: FormDataEntryValue | null) {
+    return (value !== null && typeof value === 'string' && value === 'true');
+}
+
 var envelope : Envelope = null;
 
 if (Astro.request.method === 'POST') {
@@ -114,7 +118,10 @@ if (Astro.request.method === 'POST') {
             city: formToString(formData.get("city")),
             state: formToString(formData.get("state")),
             zipcode: formToString(formData.get("zipcode")),
+            email: formToString(formData.get("email")),
+            subscribe: formToBoolean(formData.get("subscribe")),
         }
+        console.log(`subscribed is ${address.subscribe}`);
         if (isAddressValid(address)) {
             envelope = await searchReps(Astro.url.origin, address);
             console.log("created letter envelope");
