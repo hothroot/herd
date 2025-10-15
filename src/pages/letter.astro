@@ -89,6 +89,7 @@ if (Astro.request.method === 'POST') {
                     .substring(0, 8)
                     .toUpperCase();
                 return {
+                    letterId: letterId,
                     filename: `${rep.salutation} - ${today} - ${address.name}.pdf`,
                     data: letterToPdf(address, rep, today, letterId, message, photoData),
                     address: address,
@@ -101,7 +102,6 @@ if (Astro.request.method === 'POST') {
             letters = await store.uploadLetters(drafts);
             const response = await ledger.recordLetters(drafts);
             console.log("letter uploaded");
-            console.log(response.ok);
 
         }
     } else {

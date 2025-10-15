@@ -17,18 +17,25 @@ export class Ledger {
     await this.client.authorize();
     const sheetId = await this.#getLedger();
 
-    const logValue = {
-      values: [[
-        letters[0].letterId,
-      ]]
-    };
-    const response = this.client.appendRow({
-        spreadsheetId: sheetId,
-        range: 'Sheet1',
-        valueInputOption: 'RAW',
-        resource: logValue,
-    });
-    return response;
+    if (letters.length > 0) {
+      const logValue = {
+        values: [[
+          letters[0].letterId,
+          letters[0].today,
+          letters[0].address.name,
+          letters[0].address.city,
+          letters[0].address.state,
+          letters[0].recipient.fullName,
+          letters.length > 1 ? letters[1].recipient.fullName : "",
+        ]]
+      };
+      const response = this.client.appendRow({
+          spreadsheetId: sheetId,
+          range: 'Sheet1',
+          valueInputOption: 'RAW',
+          resource: logValue,
+      });
+    }
   }
 
   async #getLedger() {
