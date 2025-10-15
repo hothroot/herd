@@ -29,13 +29,15 @@ export class Ledger {
           letters.length > 1 ? letters[1].recipient.fullName : "",
         ]]
       };
-      const response = this.client.appendRow({
+      return this.client.appendRow({
           spreadsheetId: sheetId,
           range: 'Sheet1',
           valueInputOption: 'RAW',
           resource: logValue,
       });
     }
+    console.log("we tried to log an empty letter?")
+    return Promise.resolve(); // nothing to log
   }
 
   async #getLedger() {

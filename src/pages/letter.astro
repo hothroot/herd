@@ -75,8 +75,6 @@ if (Astro.request.method === 'POST') {
             } else {
                 console.log("creating letter with photo");
             }
-            const store = new LetterStorage();
-            const ledger = new Ledger();
             const drafts = reps.map((rep: Rep) => {
                  const letterId = crypto.createHash('sha256')
                     .update(address.name)
@@ -99,10 +97,15 @@ if (Astro.request.method === 'POST') {
                     recipient: rep,
                 }
             });
-            letters = await store.uploadLetters(drafts);
-            const response = await ledger.recordLetters(drafts);
-            console.log("letter uploaded");
-
+            const logTask = new Ledger().recordLetters(drafts);
+            const letterTask = new LetterStorage().uploadLetters(drafts);
+            try {
+                const responses = await Promise.all([letterTask, logTask]);
+                letters = responses[0];
+                console.log("letters uploaded");
+            } catch (error) {
+                console.log("failed to upload letters:", error);
+            }
         }
     } else {
         var address = { 
