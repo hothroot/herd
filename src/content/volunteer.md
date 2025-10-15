@@ -10,6 +10,6 @@ The COVID-19 pandemic halted in-person letter deliveries, and the election of Pr
 
 Washingtonians: We invite you to use your proximity to congressional offices in D.C. to work around these barriers to get Americans' views directly in front of their elected officials.
 
-[Contact](/contact) us to learn more about visiting Capitol Hill and getting involved in outreach and planning behind the scenes.
+Fill out the form below to learn more about visiting Capitol Hill and getting involved in outreach and planning behind the scenes.
 
 **One note: Volunteers decide for themselves whether they want to deliver a particular letter or petition. If the content of the message doesn't align with their own views, they are under no obligation to deliver it. Herd on the Hill is unapologetically anti-Trump and pro-democracy.**
