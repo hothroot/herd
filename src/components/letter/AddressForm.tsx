@@ -52,6 +52,7 @@ export default function AddressForm() {
   const { isSubmitting, isValid } = form.formState;
 
   return (
+    <div><h2>First step - your contact information for the letters</h2>
     <Form {...form}>
       <p>
         Complete the information below to generate letters to your Senators. Herd on the Hill volunteers in DC will print the letter and deliver it to your senators’ D.C. offices, engaging with staff, legislative aides and/or the senator her/himself, if possible. 
@@ -73,6 +74,7 @@ export default function AddressForm() {
         Once we get your letter, we'll add it to our next visit to Capitol Hill. While we make every effort to deliver your letter, as a volunteer group we cannot guarantee delivery, or delivery by a certain date. Unfortunately, we cannot confirm whether a delivery is made. 
       </p>
 
+      <p>All fields are required.</p>
       <form method="POST" className="w-2/3 space-y-6">
         <FormField
           control={form.control}
@@ -168,9 +170,6 @@ export default function AddressForm() {
             )}
           />
 
-        <p>All fields are required. Your address will be used to find your senators. 
-          Your email address will be used to contact you if there is a problem with delivering your letter. </p>
-        <p> On the next page you will write the body of your letter to them.</p>
         <Button type="submit" id="submit" disabled={!isValid}>
           {isSubmitting && (
             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
@@ -179,10 +178,11 @@ export default function AddressForm() {
             </svg>
           )}
           {!isSubmitting && (
-              <span> Submit </span>
+              <span> Next step - write the body of your letter </span>
           )}
         </Button>
       </form>
     </Form>
+    </div>
   )
 }
