@@ -1,10 +1,10 @@
 import { DriveClient } from '@/scripts/google-drive';
 
-export class Ledger {
+export class LogStorage {
   constructor() {
     this.client = new DriveClient();
     this.topFolder = 'Letters';
-    this.sheetName = 'Ledger';
+    this.sheetName = 'VisitorLog';
   }
 
   /**
@@ -15,7 +15,7 @@ export class Ledger {
    */
    async recordLetters(letters) {
     await this.client.authorize();
-    const sheetId = await this.#getLedger();
+    const sheetId = await this.#getLog();
 
     if (letters.length > 0) {
       const logValue = {
@@ -25,6 +25,9 @@ export class Ledger {
           letters[0].address.name,
           letters[0].address.city,
           letters[0].address.state,
+          letters[0].address.email,
+          letters[0].address.subscribe ? "subscribed" : "not subscribed",
+          letters[0].hasPhoto ? "has Photo" : "no Photo",
           letters[0].recipient.fullName,
           letters.length > 1 ? letters[1].recipient.fullName : "",
         ]]
@@ -40,7 +43,7 @@ export class Ledger {
     return Promise.resolve(); // nothing to log
   }
 
-  async #getLedger() {
+  async #getLog() {
     const lettersId = await this.client.findOrCreateFolder(this.topFolder, undefined);
     return this.client.findOrCreateFile(
         this.sheetName,

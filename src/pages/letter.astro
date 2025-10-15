@@ -11,7 +11,7 @@ import { searchReps } from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
 import validateCaptcha from '@/scripts/recaptcha.js';
 import { LetterStorage } from '@/scripts/letter-store.js';
-import { Ledger } from '@/scripts/ledger-store.js';
+import { LogStorage } from '@/scripts/log-store.js';
 import { validateEnvelope } from "@/scripts/crypto";
 import { type Envelope, isAddressValid } from '@/scripts/letter-state.js';
 
@@ -101,7 +101,7 @@ if (Astro.request.method === 'POST') {
                     recipient: rep,
                 }
             });
-            const logTask = new Ledger().recordLetters(drafts);
+            const logTask = new LogStorage().recordLetters(drafts);
             const letterTask = new LetterStorage().uploadLetters(drafts);
             try {
                 const responses = await Promise.all([letterTask, logTask]);
