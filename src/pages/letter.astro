@@ -10,12 +10,14 @@ import { type Rep, type Letter } from '@/scripts/letter-state.js';
 import { searchReps } from '@/scripts/search-reps.ts';
 import letterToPdf from '@/scripts/letter-format.js';
 import validateCaptcha from '@/scripts/recaptcha.js';
-import { StorageApi } from '@/scripts/letter-store.js';
+import { LetterStorage } from '@/scripts/letter-store.js';
+import { LogStorage } from '@/scripts/log-store.js';
 import { validateEnvelope } from "@/scripts/crypto";
-import { type Envelope, isAddressValid } from '@/scripts/letter-state.js';
+import { type Envelope, isAddressValid, minMessageLength, maxMessageLength } from '@/scripts/letter-state.js';
 
 import { USE_CAPTCHA } from "astro:env/server";
 import { SHOW_CAPTCHA } from "astro:env/client";
+import crypto from "crypto";
 
 // don't validate captcha unless we're showing it to the user
 const useCaptcha = SHOW_CAPTCHA && USE_CAPTCHA;
@@ -36,6 +38,10 @@ function formToString(value: FormDataEntryValue | null) {
         return value;
     }
     return "";
+}
+
+function formToBoolean(value: FormDataEntryValue | null) {
+    return (value !== null && typeof value === 'string' && value === 'true');
 }
 
 var envelope : Envelope = null;
@@ -67,22 +73,48 @@ if (Astro.request.method === 'POST') {
             const today = formToString(formData.get("today"));
             const now = new Date().getTime();
             let photoData: string | null = formToString(formData.get("headshot-data"));
-            if (!photoData.startsWith("data:image/png")) {
-                photoData = null;
-                console.log("creating letter without photo");
+            if (message.length < minMessageLength || message.length > maxMessageLength) {
+                isValidSubmission = false;
+                console.log("letter failed due to invalid message length");
             } else {
-                console.log("creating letter with photo");
-            }
-            const store = new StorageApi();
-            const drafts = reps.map((rep: Rep) => {
-                return {
-                    filename: `${rep.salutation} - ${today} - ${address.name}.pdf`,
-                    data: letterToPdf(address, rep, today, now, message, photoData),
-                    recipient: rep,
+                if (!photoData.startsWith("data:image/png")) {
+                    photoData = null;
+                    console.log("creating letter without photo");
+                } else {
+                    console.log("creating letter with photo");
                 }
-            });
-            letters = await store.uploadLetters(drafts);
-            console.log("letter uploaded");
+                const drafts = reps.map((rep: Rep) => {
+                     const letterId = crypto.createHash('sha256')
+                        .update(address.name)
+                        .update(address.street)
+                        .update(address.city)
+                        .update(address.state)
+                        .update(address.zipcode)
+                        .update(now.toString())
+                        .digest('hex')
+                        .substring(0, 8)
+                        .toUpperCase();
+                    return {
+                        letterId: letterId,
+                        filename: `${rep.salutation} - ${today} - ${address.name}.pdf`,
+                        data: letterToPdf(address, rep, today, letterId, message, photoData),
+                        address: address,
+                        today: today,
+                        message: message,
+                        hasPhoto: !!photoData,
+                        recipient: rep,
+                    }
+                });
+                const logTask = new LogStorage().recordLetters(drafts);
+                const letterTask = new LetterStorage().uploadLetters(drafts);
+                try {
+                    const responses = await Promise.all([letterTask, logTask]);
+                    letters = responses[0];
+                    console.log("letters uploaded");
+                } catch (error) {
+                    console.log("failed to upload letters:", error);
+                }
+            }
         }
     } else {
         var address = { 
@@ -91,6 +123,8 @@ if (Astro.request.method === 'POST') {
             city: formToString(formData.get("city")),
             state: formToString(formData.get("state")),
             zipcode: formToString(formData.get("zipcode")),
+            email: formToString(formData.get("email")),
+            subscribe: formToBoolean(formData.get("subscribe")),
         }
         if (isAddressValid(address)) {
             envelope = await searchReps(Astro.url.origin, address);

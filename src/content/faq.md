@@ -26,3 +26,19 @@ A: Aim for one letter every other week, but also take the time to do some outrea
 
 ### Q: What's this about including a photo?
 A: Though it is optional, a photo can also help you tell your story. For example, during the debates on repealing the Affordable Care Act, constituents sent photos of their family members who would be personally affected by repeal. Your photo doesn’t have to be fancy – a selfie will do!
+
+### Q: What should I write about?
+A. You should write about what is important to you. Consider the destruction wrought by this regime:
+ - Snatching people off the streets and from their workplaces without explanation or legal authority. Shipping people to third countries they have no connection to. 
+ - The destruction of health, environmental, and education programs that help countless Americans
+ - The cruel and pointless firing of experienced and dedicated federal workers
+ - Cuts to Medicaid and SNAP to hand off more tax breaks to the top 1 percent 
+ - Lining the Trump family’s pockets with literal billions of dollars through grift, crypto scams, and bribes from foreigners
+ - Bullying and threatening our educational institutions, governors, non-profits, and media to bring them to heel
+ - An utterly inept tariff “policy” that irrevocably harms US consumers, workers, and companies 
+ - Slashing foreign aid that has saved lives and countered the influence of countries like China and Russia 
+ - Grossly unqualified cabinet members bungling decades of US authority, reputation, and trust
+ - The unlawful occupation of Washington, DC, Los Angeles and other US cities by American troops and tanks
+ - Halting renewable energy projects and other climate change initiatives that had already saved billions of dollars and had been helping to blunt the destructive effects of a hotter, drier planet
+ - Gutting agencies like FEMA and the National Weather that are critical for responding to emergencies
+ - Hiding evidence of Trump’s connections to Jeffrey Epstein

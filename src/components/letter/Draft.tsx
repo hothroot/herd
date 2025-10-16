@@ -3,7 +3,7 @@
 import { RECAPTCHA_SITE_KEY, SHOW_CAPTCHA } from "astro:env/client";
 
 import { Button } from "@/components/ui/button"
-import { type Envelope, type Rep } from '@/scripts/letter-state.js';
+import { type Envelope, type Rep, minMessageLength, maxMessageLength } from '@/scripts/letter-state.js';
 import profileRef from '../../assets/profile.png';
 import ReCAPTCHA from "react-google-recaptcha";
 import TextareaAutosize from 'react-textarea-autosize';
@@ -17,7 +17,6 @@ const today = new Date().toLocaleString('default', {
     month: 'long',
     year: 'numeric',
 });
-const maxMessageLength = 1000;
 const redMessageLength = 0.9 * maxMessageLength;
 const yellowMessageLength = 0.75 * maxMessageLength;
 
@@ -126,22 +125,33 @@ export default function Draft(props: Props) {
                 </div>
             </div>
             <div className="grid w-full gap-2 min-h-32 h-fit">
-                <TextareaAutosize id="message" name="message" maxLength={maxMessageLength}
+                <TextareaAutosize id="message" name="message"
+                    maxLength={maxMessageLength}
+                    minLength={minMessageLength}
                     autoFocus={true}
                     minRows={7}
                     value={messageContent}
                     onChange={handleMessageChange}
                     placeholder={messagePlaceholder} />
             </div>
-            <div className={[
-                'flex',
-                'justify-end',
-                messageLength > redMessageLength ? 'text-red-600' :
-                messageLength > yellowMessageLength ? 'text-yellow-600' :
-                'text-black'
-            ].join(' ')}>
-                {messageLength} / {maxMessageLength}
+
+            <div className="flow-root w-full">
+                {messageLength < minMessageLength && 
+                    <div className='float-left text-red-600'>
+                        Please write a message that is at least 100 characters long.
+                    </div>
+                }
+                <div className={[
+                    'float-right',
+                    messageLength < minMessageLength ? 'text-red-600' :
+                    messageLength > redMessageLength ? 'text-red-600' :
+                    messageLength > yellowMessageLength ? 'text-yellow-600' :
+                    'text-black'
+                ].join(' ')}>
+                    {messageLength} / {maxMessageLength}
+                </div>
             </div>
+            
             <div className="flow-root">
                 <div className="w-2/3 md:w-1/2 md:float-right">
                     <div className="flex md:flex-row flex-col">
@@ -177,7 +187,7 @@ export default function Draft(props: Props) {
                             sitekey={RECAPTCHA_SITE_KEY}
                             onChange={onCaptcha}
                         />)}
-                    <Button type="submit" disabled={isSubmitting || captchaData === null} className="flex items-center justify-center px-4 py-2">
+                    <Button type="submit" disabled={isSubmitting || captchaData === null || messageLength < minMessageLength} className="flex items-center justify-center px-4 py-2">
                         {isSubmitting && (
                             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />

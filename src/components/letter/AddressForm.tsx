@@ -6,6 +6,7 @@ import { z } from "zod"
 import { allStateNamesAndCodes, zipRegExp } from "@/scripts/states"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -29,6 +30,9 @@ const AddressSchema = z.object({
   city: z.string(),
   state: StateSchema,
   zipcode: z.string().regex(zipRegExp),
+  email: z.string().email("Please include a valid email address so we can contact if there is a problem with your letter."),
+  subscribe: z.boolean(),
+  
 });
 
 export default function AddressForm() {
@@ -41,11 +45,14 @@ export default function AddressForm() {
       city: "",
       state: "",
       zipcode: "",
+      email: "",
+      subscribe: false,
     },
   })
   const { isSubmitting, isValid } = form.formState;
 
   return (
+    <div><h2>First step - your contact information for the letters</h2>
     <Form {...form}>
       <p>
         Complete the information below to generate letters to your Senators. Herd on the Hill volunteers in DC will print the letter and deliver it to your senators’ D.C. offices, engaging with staff, legislative aides and/or the senator her/himself, if possible. 
@@ -67,6 +74,7 @@ export default function AddressForm() {
         Once we get your letter, we'll add it to our next visit to Capitol Hill. While we make every effort to deliver your letter, as a volunteer group we cannot guarantee delivery, or delivery by a certain date. Unfortunately, we cannot confirm whether a delivery is made. 
       </p>
 
+      <p>All fields are required.</p>
       <form method="POST" className="w-2/3 space-y-6">
         <FormField
           control={form.control}
@@ -135,8 +143,33 @@ export default function AddressForm() {
             )}
           />
           </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="me@gmail.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="subscribe"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center space-x-2">
+                <FormLabel>Subscribe to newsletter: </FormLabel>
+                <FormControl>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <p>Your address will be used to find your senators, and on the next page you will write the body of your letter to them.</p>
         <Button type="submit" id="submit" disabled={!isValid}>
           {isSubmitting && (
             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
@@ -145,10 +178,11 @@ export default function AddressForm() {
             </svg>
           )}
           {!isSubmitting && (
-              <span> Submit </span>
+              <span> Next step - write the body of your letter </span>
           )}
         </Button>
       </form>
     </Form>
+    </div>
   )
 }

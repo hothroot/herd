@@ -1,10 +1,9 @@
 import PDFDocument from 'pdfkit';
 import { type Address, type Rep } from '@/scripts/letter-state.js';
 import { stateDecoder } from '@/scripts//states.ts';
-import crypto from "crypto";
 
 const FONT_SIZE = 14;
-const FOOTER_SIZE = 10;
+const FOOTER_SIZE = 8;
 
 function footer(doc: typeof PDFDocument, fontSize: number, letterId: string, buildingCode: string) {
     var bottom = doc.page.margins.bottom;
@@ -31,7 +30,7 @@ function footer(doc: typeof PDFDocument, fontSize: number, letterId: string, bui
     doc.page.margins.bottom = bottom;
 }
 
-export default function letterToPdf(address: Address, rep: Rep, today: string, now: number, message: string, photo: string | null) {
+export default function letterToPdf(address: Address, rep: Rep, today: string, letterId: string, message: string, photo: string | null) {
     const postalCode = stateDecoder(address.state);
     const officeLine = rep.office !== "unknown" ? `${rep.office}\n`: "";
     const messageClean = message.replaceAll('\r', '');
@@ -39,16 +38,6 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, n
     const buildingNumber = rep.office === "unknown" ? "UNK" : rep.office.substring(0, 3);
     const buildingInitial = rep.office === "unknown" ? 'X' : rep.office[4];
     const senatorId = rep.id.replace(/_/g,'-');
-    const letterId = crypto.createHash('sha256')
-        .update(address.name)
-        .update(address.street)
-        .update(address.city)
-        .update(address.state)
-        .update(address.zipcode)
-        .update(now.toString())
-        .digest('hex')
-        .substring(0, 8)
-        .toUpperCase();
     const buildingCode = `${buildingNumber}-${buildingInitial}-${senatorId}`;
     const doc = new PDFDocument({
         size: 'LETTER',

@@ -33,3 +33,6 @@ export function isAddressValid(address: Address) {
         address["zipcode"].match(zipRegExp)
     );
 }
+
+export const minMessageLength = 100;
+export const maxMessageLength = 1000;
