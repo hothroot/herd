@@ -34,5 +34,12 @@ export function isAddressValid(address: Address) {
     );
 }
 
+export enum FlowStatus {
+    GET,
+    DRAFT,
+    RECEIPT,
+    ERROR
+};
+
 export const minMessageLength = 100;
 export const maxMessageLength = 1000;

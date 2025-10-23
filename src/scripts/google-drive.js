@@ -13,7 +13,7 @@ export class DriveClient {
    *
    */
   async authorize() {
-    if (!this.client) {
+    if (!this.auth) {
         try {
             const keys = JSON.parse(SERVICE_KEY);
             this.auth = google.auth.fromJSON(keys);
