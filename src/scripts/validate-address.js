@@ -2,7 +2,8 @@ import axios from 'axios';
 import qs from 'qs';
 
 import { USPS_KEY, USPS_SECRET } from "astro:env/server";
-import { zipRegExp } from "@/scripts/states"
+import { allStateNamesAndCodes, zipRegExp } from "@/scripts/states";
+import { AddressStatus } from '@/scripts/letter-state'
 
 const TOKEN_URL = 'https://apis.usps.com/oauth2/v3/token';
 const USPS_API_BASE_URL = 'https://apis.usps.com';
@@ -30,8 +31,15 @@ async function getAccessToken() {
 
 export async function validateAddress(address) {
     try {
-        if (!address.name || !address.street || !address.city || !address.state || !address.zipcode) {
-            address.error = true;
+        if (!address.name
+            || !address.street 
+            || !address.city 
+            || !address.state
+            || !allStateNamesAndCodes.includes(address.state.toUpperCase())
+            || !address.zipcode
+            || !address["zipcode"].match(zipRegExp)) {
+            address.status = AddressStatus.ERROR;
+            address.notes = "Address is missing required information.";
             return address;
         }
         const zipParts = zipRegExp.exec(address.zipcode);
@@ -50,28 +58,46 @@ export async function validateAddress(address) {
                     'Content-Type': 'application/json'
                 }
         });
-        const corrections = response.data.corrections.map((c) => c.code);
-        const matches = response.data.matches.map((c) => c.code);
         var zipcode = response.data.address.ZIPCode;
         if (response.data.address.ZIPCode.length == 4) {
             zipcode += '-' + response.data.address.ZIPPlus4;
         }
-        const retval = {
-            name: address.name,
-            street:  response.data.address.streetAddress,
-            city: response.data.address.city,
-            state: response.data.address.state,
-            zipcode: zipcode,
-            matched: true,
-            exact: matches.includes('31'),
-            incomplete: corrections.includes('32'),
-            ambiguous: corrections.includes('22'),
-            error: false,
-        }
+        var status = AddressStatus.ERROR;
+        var notes = "We were unable to validate this address.";
+        response.data.corrections.forEach((c) => {
+            if (c.code == '22') {
+                status = AddressStatus.AMBIGUOUS;
+                notes = c.text;
+            }
+            if (c.code == '32') {
+                status = AddressStatus.INCOMPLETE;
+                notes = c.text;
+            }
+        });
+        response.data.matches.forEach((m) => {
+            if (m.code == '31') {
+                status = AddressStatus.EXACT;
+                notes = m.text;
+            }
+        });
+
+        var retval = address;
+        retval.name = address.name;
+        retval.street = response.data.address.streetAddress + ' ' + response.data.address.secondaryAddress;
+        retval.city = response.data.address.city;
+        retval.state = response.data.address.state;
+        retval.zipcode = zipcode;
+        retval.status = status;
+        retval.notes = notes;
         return retval;
     } catch (error) {
         console.error('Error validating address:', error.message);
-        address.error = true;
+        address.status = AddressStatus.ERROR;
+        if (error.response && error.response.data && error.response.data.error && error.response.data.error.message) {
+            address.notes = error.response.data.error.message;
+        } else {
+            address.notes = "Technical Error, please try again later.";
+        }
         return address;
     }
 }

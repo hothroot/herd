@@ -9,7 +9,8 @@ import Error from '../components/letter/Error.astro';
 import { type Letter, FlowStatus } from '@/scripts/letter-state.js';
 import { searchReps } from '@/scripts/search-reps.ts';
 import { createLetters } from '@/scripts/letter-create.js';
-import { type Envelope, isAddressValid } from '@/scripts/letter-state.js';
+import { type Address, type Envelope, AddressStatus, emptyAddress } from '@/scripts/letter-state.js';
+import { validateAddress } from "@/scripts/validate-address"
 
 function formToString(value: FormDataEntryValue | null) {
     if (value === null) {
@@ -26,17 +27,18 @@ function formToBoolean(value: FormDataEntryValue | null) {
 }
 
 var flowStatus: FlowStatus = FlowStatus.ERROR; // in case we forgetto set it to something else 
+var address : Address = emptyAddress();
 var envelope : Envelope = null;
 var letters: Array<Letter> = [];
 
 if (Astro.request.method === 'GET') {
     // start the flow
-    flowStatus = FlowStatus.GET;
+    flowStatus = FlowStatus.ADDRESS;
 } else if (Astro.request.method === 'POST') {
     const formData = await Astro.request.formData();
     if (!formData.has("message")) {
         // handle address submission
-        var address = { 
+        var queryAddress = { 
             name: formToString(formData.get("name")),
             street: formToString(formData.get("street")),
             city: formToString(formData.get("city")),
@@ -45,10 +47,16 @@ if (Astro.request.method === 'GET') {
             email: formToString(formData.get("email")),
             subscribe: formToBoolean(formData.get("subscribe")),
         }
-        if (isAddressValid(address)) {
-            envelope = await searchReps(Astro.url.origin, address);
-            console.log("created letter envelope");
-            flowStatus = FlowStatus.DRAFT;
+        address = await validateAddress(queryAddress);
+        if (address) {
+            if (address.status == AddressStatus.EXACT) {
+                envelope = await searchReps(Astro.url.origin, address);
+                console.log("created letter envelope");
+                flowStatus = FlowStatus.DRAFT;
+            } else {
+                console.log(`requesting adress clarification: ${address.notes}`);
+                flowStatus = FlowStatus.ADDRESS;
+            }
         } else {
             flowStatus = FlowStatus.ERROR;
         }
@@ -88,7 +96,7 @@ switch (flowStatus) {
  */
 ---
 <BaseLayout pageTitle={pageTitle} >
-    {flowStatus === FlowStatus.GET     && <AddressForm client:load /> }
+    {flowStatus === FlowStatus.ADDRESS && <AddressForm address={address} client:load client:only="react"/> }
     {flowStatus === FlowStatus.DRAFT   && <Draft envelope={envelope} client:load client:only="react"/> } 
     {flowStatus === FlowStatus.RECEIPT && <Receipt letters={letters} /> }
     {flowStatus === FlowStatus.ERROR   && <Error /> }

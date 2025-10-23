@@ -98,5 +98,7 @@ export function stateDecoder(probe: string) : string {
 
 export const allStateNamesAndCodes = Object.keys(states).map(
   (key) => [key, states[key]["name"].toUpperCase()]).flat();
+
+export const uspsCodesRegExp = /^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$/;
   
 export const zipRegExp = /(?<zip>^\d{5}$)|((?<zip5>^\d{5})-(?<plus4>\d{4}$))/;

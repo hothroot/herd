@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { allStateNamesAndCodes, zipRegExp } from "@/scripts/states"
-
+import { uspsCodesRegExp, zipRegExp } from "@/scripts/states"
+import { type Address, AddressStatus } from '@/scripts/letter-state.js';
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -17,11 +17,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 const StateSchema = 
-  z.string()
-  .refine(
-      (state) => allStateNamesAndCodes.includes(state.toUpperCase()),
-      `State must be a two-letter postal code or the full state name`
-    );
+  z.string().regex(uspsCodesRegExp, 'State must be a two-letter postal code.');
 const AddressSchema = z.object({
   name: z.string().min(1, {
     message: "Please include your name.",
@@ -35,21 +31,30 @@ const AddressSchema = z.object({
   
 });
 
-export default function AddressForm() {
+type Props = {
+  address: Address,
+};
+
+export default function AddressForm(props: Props) {
+  const address = props.address;
+  var message = null;
   const form = useForm<z.infer<typeof AddressSchema>>({
     resolver: zodResolver(AddressSchema),
     mode: 'onChange',
     defaultValues: {
-      name: "",
-      street: "",
-      city: "",
-      state: "",
-      zipcode: "",
-      email: "",
-      subscribe: false,
+      name:      address.status != AddressStatus.EMPTY ? address.name : "",
+      street:    address.status != AddressStatus.EMPTY ? address.street : "",
+      city:      address.status != AddressStatus.EMPTY ? address.city : "",
+      state:     address.status != AddressStatus.EMPTY ? address.state : "",
+      zipcode:   address.status != AddressStatus.EMPTY ? address.zipcode : "",
+      email:     address.status != AddressStatus.EMPTY ? address.email : "",
+      subscribe: address.status != AddressStatus.EMPTY && address.subscribe ? true : false,
     },
   })
   const { isSubmitting, isValid } = form.formState;
+  if (address.status != AddressStatus.EMPTY) {
+    message = address.notes;
+  }
 
   return (
     <div><h2>First step - your contact information for the letters</h2>
@@ -75,6 +80,9 @@ export default function AddressForm() {
       </p>
 
       <p>All fields are required.</p>
+
+      { message && <div className="text-red-600"><p>{message} </p></div> }
+
       <form method="POST" className="w-2/3 space-y-6">
         <FormField
           control={form.control}
@@ -163,7 +171,7 @@ export default function AddressForm() {
               <FormItem className="flex flex-row items-center space-x-2">
                 <FormLabel>Subscribe to newsletter: </FormLabel>
                 <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} {...field} />
+                  <Input type="checkbox" className="w-4 h-4" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
