@@ -99,4 +99,4 @@ export function stateDecoder(probe: string) : string {
 export const allStateNamesAndCodes = Object.keys(states).map(
   (key) => [key, states[key]["name"].toUpperCase()]).flat();
   
-export const zipRegExp = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+export const zipRegExp = /(?<zip>^\d{5}$)|((?<zip5>^\d{5})-(?<plus4>\d{4}$))/;
