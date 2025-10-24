@@ -59,7 +59,7 @@ export async function validateAddress(address) {
                 }
         });
         var zipcode = response.data.address.ZIPCode;
-        if (response.data.address.ZIPCode.length == 4) {
+        if (response.data.address.ZIPPlus4.length == 4) {
             zipcode += '-' + response.data.address.ZIPPlus4;
         }
         var status = AddressStatus.ERROR;
