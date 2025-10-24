@@ -103,6 +103,7 @@ export default function Draft(props: Props) {
                     <p>
                         {address.name} <br />
                         {address.street} <br />
+                        {address.line2} {address.line2 && <br />}
                         {address.city}, {address.state} {address.zipcode}
                     </p>
                 </div>

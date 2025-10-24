@@ -16,6 +16,7 @@ export enum FlowStatus {
 export type Address = {   
     name: string;
     street: string;
+    line2: string;
     city: string;
     state: string;
     zipcode: string;
@@ -54,6 +55,7 @@ export function emptyAddress() : Address {
     return {
         name: '',
         street: '',
+        line2: '',
         city: '',
         state: '',
         zipcode: '',

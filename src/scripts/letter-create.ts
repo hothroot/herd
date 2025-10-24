@@ -47,11 +47,7 @@ export async function createLetters(
         }
         const drafts = reps.map((rep: Rep) => {
                 const letterId = crypto.createHash('sha256')
-                .update(address.name)
-                .update(address.street)
-                .update(address.city)
-                .update(address.state)
-                .update(address.zipcode)
+                .update(JSON.stringify(address))
                 .update(now.toString())
                 .digest('hex')
                 .substring(0, 8)

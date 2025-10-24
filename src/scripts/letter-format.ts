@@ -72,7 +72,7 @@ export function letterToPdf(address: Address, rep: Rep, today: string, letterId:
     doc.moveDown(centering);
 
     let line1 = address.name;
-    let line2 = address.street;
+    let line2 = address.line2 ? `${address.street}\n${address.line2}` : address.street;
     let line3 = `${address.city}, ${postalCode}, ${address.zipcode}`;
     let addressWidth = Math.max(
         doc.widthOfString(line1),

@@ -46,8 +46,9 @@ export async function validateAddress(address) {
         const accessToken = await getAccessToken();
         const uri = `${USPS_API_BASE_URL}/addresses/v3/address` +
             `?streetAddress=${encodeURIComponent(address.street)}` +
+            (address.line2 ? `&secondaryAddress=${encodeURIComponent(address.line2)}` : '') + 
             `&city=${encodeURIComponent(address.city)}` +
-            `&state=${encodeURIComponent(address.state)}` +
+            `&state=${encodeURIComponent(address.state.toUpperCase())}` +
             `&ZIPCode=${encodeURIComponent(zipParts.groups['zip'] ? zipParts.groups['zip'] : zipParts.groups['zip5'])}` +
             (zipParts.groups['plus4'] ? `&ZIPPlus4=${encodeURIComponent(zipParts.groups['plus4'])}` : "");
         const response = await axios.get(
@@ -83,7 +84,8 @@ export async function validateAddress(address) {
 
         var retval = address;
         retval.name = address.name;
-        retval.street = response.data.address.streetAddress + ' ' + response.data.address.secondaryAddress;
+        retval.street = response.data.address.streetAddress;
+        retval.line2 = response.data.address.secondaryAddress;
         retval.city = response.data.address.city;
         retval.state = response.data.address.state;
         retval.zipcode = zipcode;

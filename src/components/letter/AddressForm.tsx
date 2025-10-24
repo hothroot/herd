@@ -23,6 +23,7 @@ const AddressSchema = z.object({
     message: "Please include your name.",
   }),
   street: z.string(),
+  line2: z.string(),
   city: z.string(),
   state: StateSchema,
   zipcode: z.string().regex(zipRegExp),
@@ -44,6 +45,7 @@ export default function AddressForm(props: Props) {
     defaultValues: {
       name:      address.status != AddressStatus.EMPTY ? address.name : "",
       street:    address.status != AddressStatus.EMPTY ? address.street : "",
+      line2:    address.status != AddressStatus.EMPTY ? address.line2 : "",
       city:      address.status != AddressStatus.EMPTY ? address.city : "",
       state:     address.status != AddressStatus.EMPTY ? address.state : "",
       zipcode:   address.status != AddressStatus.EMPTY ? address.zipcode : "",
@@ -113,9 +115,22 @@ export default function AddressForm(props: Props) {
           name="street"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Street Address</FormLabel>
+              <FormLabel>Address Line 1</FormLabel>
               <FormControl>
                 <Input placeholder="123 Main Street" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="line2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address Line 2</FormLabel>
+              <FormControl>
+                <Input placeholder="Apartment 523" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

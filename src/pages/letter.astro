@@ -41,8 +41,9 @@ if (Astro.request.method === 'GET') {
         var queryAddress = { 
             name: formToString(formData.get("name")),
             street: formToString(formData.get("street")),
+            line2: formToString(formData.get("line2")),
             city: formToString(formData.get("city")),
-            state: formToString(formData.get("state")),
+            state: formToString(formData.get("state")).toUpperCase(),
             zipcode: formToString(formData.get("zipcode")),
             email: formToString(formData.get("email")),
             subscribe: formToBoolean(formData.get("subscribe")),
