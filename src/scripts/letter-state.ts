@@ -59,7 +59,7 @@ export function emptyAddress() : Address {
         zipcode: '',
         email: '',
         subscribe: false,
-        status: AddressStatus.ERROR,
+        status: AddressStatus.EMPTY,
         notes: ''
     };
 }
