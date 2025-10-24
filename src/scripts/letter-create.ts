@@ -24,7 +24,12 @@ export async function createLetters(
     var flowStatus: FlowStatus = FlowStatus.ERROR;
     var letters: Array<Letter> = [];
 
-    var captchaIsValid = await validateCaptcha(captchaToken);
+    var captchaIsValid = false;
+    try {
+        captchaIsValid = await validateCaptcha(captchaToken);
+    } catch (error) {
+        console.log("letter failed due to error validating captcha:", error);
+    }
     if (envelope === null) {
         console.log("letter failed due to null envelope");
     } else if (!validateEnvelope(envelope)) {
@@ -63,11 +68,11 @@ export async function createLetters(
                 recipient: rep,
             }
         });
-        const driveClient = new DriveClient();
-        await driveClient.authorize()
-        const logTask = new LogStorage(driveClient).recordLetters(drafts);
-        const letterTask = new LetterStorage(driveClient).uploadLetters(drafts);
         try {
+            const driveClient = new DriveClient();
+            await driveClient.authorize()
+            const logTask = new LogStorage(driveClient).recordLetters(drafts);
+            const letterTask = new LetterStorage(driveClient).uploadLetters(drafts);
             const responses = await Promise.all([letterTask, logTask]);
             console.log("letters uploaded");
             flowStatus = FlowStatus.RECEIPT;

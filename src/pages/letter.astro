@@ -35,40 +35,60 @@ if (Astro.request.method === 'GET') {
     // start the flow
     flowStatus = FlowStatus.ADDRESS;
 } else if (Astro.request.method === 'POST') {
-    const formData = await Astro.request.formData();
-    if (!formData.has("message")) {
-        // handle address submission
-        var queryAddress = { 
-            name: formToString(formData.get("name")),
-            street: formToString(formData.get("street")),
-            line2: formToString(formData.get("line2")),
-            city: formToString(formData.get("city")),
-            state: formToString(formData.get("state")).toUpperCase(),
-            zipcode: formToString(formData.get("zipcode")),
-            email: formToString(formData.get("email")),
-            subscribe: formToBoolean(formData.get("subscribe")),
-        }
-        address = await validateAddress(queryAddress);
-        if (address) {
-            if (address.status == AddressStatus.EXACT) {
-                envelope = await searchReps(Astro.url.origin, address);
-                console.log("created letter envelope");
-                flowStatus = FlowStatus.DRAFT;
+    try {
+        const formData = await Astro.request.formData();
+        if (!formData.has("message")) {
+            // handle address submission
+            var queryAddress = { 
+                name: formToString(formData.get("name")),
+                street: formToString(formData.get("street")),
+                line2: formToString(formData.get("line2")),
+                city: formToString(formData.get("city")),
+                state: formToString(formData.get("state")).toUpperCase(),
+                zipcode: formToString(formData.get("zipcode")),
+                email: formToString(formData.get("email")),
+                subscribe: formToBoolean(formData.get("subscribe")),
+            }
+            try {
+                address = await validateAddress(queryAddress);
+            } catch (error) {
+                console.log("failed to validate address:", error);
+                flowStatus = FlowStatus.ERROR;
+            }
+            if (address) {
+                if (address.status == AddressStatus.EXACT) {
+                    try {
+                        envelope = await searchReps(Astro.url.origin, address);
+                        console.log("created letter envelope");
+                        flowStatus = FlowStatus.DRAFT;
+                    } catch (error) {
+                        console.log("failed to search for electids:", error);
+                        flowStatus = FlowStatus.ERROR;
+                    }
+                } else {
+                    console.log(`requesting adress clarification: ${address.notes}`);
+                    flowStatus = FlowStatus.ADDRESS;
+                }
             } else {
-                console.log(`requesting adress clarification: ${address.notes}`);
-                flowStatus = FlowStatus.ADDRESS;
+                flowStatus = FlowStatus.ERROR;
             }
         } else {
-            flowStatus = FlowStatus.ERROR;
+            // handle message submission
+            envelope = JSON.parse(formToString(formData.get("envelope"))) as Envelope;
+            const captchaToken: string | null = formToString(formData.get("captcha-data"));
+            const message = formToString(formData.get("message"));
+            let photoData: string | null = formToString(formData.get("headshot-data"));
+            const today = formToString(formData.get("today"));
+            try {
+                [flowStatus, letters] = await createLetters(envelope, message, photoData, captchaToken, today);
+            } catch (error) {
+                console.log("failed to create letters:", error);
+                flowStatus = FlowStatus.ERROR;
+            }
         }
-    } else {
-        // handle message submission
-        envelope = JSON.parse(formToString(formData.get("envelope"))) as Envelope;
-        const captchaToken: string | null = formToString(formData.get("captcha-data"));
-        const message = formToString(formData.get("message"));
-        let photoData: string | null = formToString(formData.get("headshot-data"));
-        const today = formToString(formData.get("today"));
-        [flowStatus, letters] = await createLetters(envelope, message, photoData, captchaToken, today);
+     } catch (error) {
+        console.log("failed to unpack form data:", error);
+        flowStatus = FlowStatus.ERROR;
     }
 } else {
     console.log(`received unexpected ${Astro.request.method} request`);
