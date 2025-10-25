@@ -89,7 +89,7 @@ export default function AddressForm(props: Props) {
     }
 
     { message && 
-      <div>
+      <div id="usps-error">
         <p >The US Postal Service rejected this address with the explaination:</p>
         <p className="text-red-600">{message}</p>
         <p>Please correct the address and try again.</p>
