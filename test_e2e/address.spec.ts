@@ -16,6 +16,7 @@ test('button becomes enabled with valid input', async ({ page }) => {
 
     await page.locator('input[name="name"]').fill('John Doe');
     await page.locator('input[name="street"]').fill('123 Main Street');
+    await page.locator('input[name="line2"]').fill('Apartment 1');
     await page.locator('input[name="city"]').fill('Springfield');
     await page.locator('input[name="state"]').fill('MA');
     await page.locator('input[name="zipcode"]').fill('01101');

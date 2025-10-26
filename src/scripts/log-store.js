@@ -1,8 +1,6 @@
-import { DriveClient } from '@/scripts/google-drive';
-
 export class LogStorage {
-  constructor() {
-    this.client = new DriveClient();
+  constructor(client) {
+    this.client = client;
     this.topFolder = 'Letters';
     this.sheetName = 'VisitorLog';
   }

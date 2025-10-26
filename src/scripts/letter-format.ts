@@ -30,7 +30,7 @@ function footer(doc: typeof PDFDocument, fontSize: number, letterId: string, bui
     doc.page.margins.bottom = bottom;
 }
 
-export default function letterToPdf(address: Address, rep: Rep, today: string, letterId: string, message: string, photo: string | null) {
+export function letterToPdf(address: Address, rep: Rep, today: string, letterId: string, message: string, photo: string | null) {
     const postalCode = stateDecoder(address.state);
     const officeLine = rep.office !== "unknown" ? `${rep.office}\n`: "";
     const messageClean = message.replaceAll('\r', '');
@@ -72,7 +72,7 @@ export default function letterToPdf(address: Address, rep: Rep, today: string, l
     doc.moveDown(centering);
 
     let line1 = address.name;
-    let line2 = address.street;
+    let line2 = address.line2 ? `${address.street}\n${address.line2}` : address.street;
     let line3 = `${address.city}, ${postalCode}, ${address.zipcode}`;
     let addressWidth = Math.max(
         doc.widthOfString(line1),

@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import { RECAPTCHA_SECRET_KEY } from "astro:env/server";
 
 
-export default async function validateCaptcha(token) {
+export async function validateCaptcha(token) {
     if (token === null || token === "" || token === "DISABLED") {
         return false;
     }

@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { allStateNamesAndCodes, zipRegExp } from "@/scripts/states"
-
+import { uspsCodesRegExp, zipRegExp } from "@/scripts/states"
+import { type Address, AddressStatus } from '@/scripts/letter-state.js';
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -17,16 +17,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 const StateSchema = 
-  z.string()
-  .refine(
-      (state) => allStateNamesAndCodes.includes(state.toUpperCase()),
-      `State must be a two-letter postal code or the full state name`
-    );
+  z.string().regex(uspsCodesRegExp, 'State must be a two-letter postal code.');
 const AddressSchema = z.object({
   name: z.string().min(1, {
     message: "Please include your name.",
   }),
   street: z.string(),
+  line2: z.string(),
   city: z.string(),
   state: StateSchema,
   zipcode: z.string().regex(zipRegExp),
@@ -35,46 +32,70 @@ const AddressSchema = z.object({
   
 });
 
-export default function AddressForm() {
+type Props = {
+  address: Address,
+};
+
+export default function AddressForm(props: Props) {
+  const address = props.address;
+  var message = null;
   const form = useForm<z.infer<typeof AddressSchema>>({
     resolver: zodResolver(AddressSchema),
     mode: 'onChange',
     defaultValues: {
-      name: "",
-      street: "",
-      city: "",
-      state: "",
-      zipcode: "",
-      email: "",
-      subscribe: false,
+      name:      address.status != AddressStatus.EMPTY ? address.name : "",
+      street:    address.status != AddressStatus.EMPTY ? address.street : "",
+      line2:    address.status != AddressStatus.EMPTY ? address.line2 : "",
+      city:      address.status != AddressStatus.EMPTY ? address.city : "",
+      state:     address.status != AddressStatus.EMPTY ? address.state : "",
+      zipcode:   address.status != AddressStatus.EMPTY ? address.zipcode : "",
+      email:     address.status != AddressStatus.EMPTY ? address.email : "",
+      subscribe: address.status != AddressStatus.EMPTY && address.subscribe ? true : false,
     },
   })
+  if (address.status != AddressStatus.EMPTY) {
+    message = address.notes;
+  }
+  
   const { isSubmitting, isValid } = form.formState;
 
   return (
     <div><h2>First step - your contact information for the letters</h2>
     <Form {...form}>
-      <p>
-        Complete the information below to generate letters to your Senators. Herd on the Hill volunteers in DC will print the letter and deliver it to your senators’ D.C. offices, engaging with staff, legislative aides and/or the senator her/himself, if possible. 
-      </p>
+    { address.status == AddressStatus.EMPTY &&
+      <div>
+        <p>
+          Complete the information below to generate letters to your Senators. Herd on the Hill volunteers in DC will print the letter and deliver it to your senators’ D.C. offices, engaging with staff, legislative aides and/or the senator her/himself, if possible. 
+        </p>
 
-      <p>
-        Need help writing a letter? Please check out our <a href="/tips" target="_blank">FAQs.</a>.
-      </p>
+        <p>
+          Need help writing a letter? Please check out our <a href="/tips" target="_blank">FAQs.</a>.
+        </p>
 
-      <p>
-        Quick tips: Be concise, polite, and personal. Aim for two to three paragraphs, tops. No profanity, insults, or threats.
-      </p>
+        <p>
+          Quick tips: Be concise, polite, and personal. Aim for two to three paragraphs, tops. No profanity, insults, or threats.
+        </p>
 
-      <p>
-        Photos: Personalize your letter and make it stand out with a photo of you, your family, your friends, or your community.
-      </p>
+        <p>
+          Photos: Personalize your letter and make it stand out with a photo of you, your family, your friends, or your community.
+        </p>
 
-      <p>
-        Once we get your letter, we'll add it to our next visit to Capitol Hill. While we make every effort to deliver your letter, as a volunteer group we cannot guarantee delivery, or delivery by a certain date. Unfortunately, we cannot confirm whether a delivery is made. 
-      </p>
+        <p>
+          Once we get your letter, we'll add it to our next visit to Capitol Hill. While we make every effort to deliver your letter, as a volunteer group we cannot guarantee delivery, or delivery by a certain date. Unfortunately, we cannot confirm whether a delivery is made. 
+        </p>
 
-      <p>All fields are required.</p>
+        <p>All fields are required.</p>
+      </div>
+    }
+
+    { message && 
+      <div id="usps-error">
+        <p >The US Postal Service rejected this address with the explaination:</p>
+        <p className="text-red-600">{message}</p>
+        <p>Please correct the address and try again.</p>
+      </div>
+    }
+
       <form method="POST" className="w-2/3 space-y-6">
         <FormField
           control={form.control}
@@ -94,9 +115,22 @@ export default function AddressForm() {
           name="street"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Street Address</FormLabel>
+              <FormLabel>Address Line 1</FormLabel>
               <FormControl>
                 <Input placeholder="123 Main Street" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="line2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address Line 2</FormLabel>
+              <FormControl>
+                <Input placeholder="Apartment 523" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -163,7 +197,7 @@ export default function AddressForm() {
               <FormItem className="flex flex-row items-center space-x-2">
                 <FormLabel>Subscribe to newsletter: </FormLabel>
                 <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} {...field} />
+                  <Input type="checkbox" className="w-4 h-4" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -53,6 +53,8 @@ export default defineConfig({
       RECAPTCHA_SITE_KEY: envField.string({ context: "client", access:"public" }),
       RECAPTCHA_SECRET_KEY: envField.string({ context: "server", access:"secret" }),
       GTAG: envField.string({ context: "client", access:"public" }),
+      USPS_KEY: envField.string({ context: "server", access:"secret" }),
+      USPS_SECRET: envField.string({ context: "server", access:"secret" }),
     }
   },
 

@@ -2,8 +2,8 @@ import { DriveClient } from '@/scripts/google-drive';
 import { DRIVE_ID } from "astro:env/server";
 
 export class LetterStorage {
-  constructor() {
-    this.client = new DriveClient();
+  constructor(client) {
+    this.client = client;
     this.weekId = undefined;
     this.topFolder = 'Letters';
   }

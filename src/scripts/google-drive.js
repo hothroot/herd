@@ -13,7 +13,7 @@ export class DriveClient {
    *
    */
   async authorize() {
-    if (!this.client) {
+    if (!this.auth) {
         try {
             const keys = JSON.parse(SERVICE_KEY);
             this.auth = google.auth.fromJSON(keys);
@@ -42,47 +42,52 @@ export class DriveClient {
    * find or create a file.
    */
   async findOrCreateFile(name, mimeType, parentId) {
-    const drive = google.drive({version: 'v3', auth: this.auth});
-    let queryTerms = [
-      `name = '${name}'`,
-      "trashed = false",
-      `mimeType = '${mimeType}'`,
-    ];
-    if (parentId) {
-      queryTerms.push(`'${parentId}' in parents`);
-    }
-    const query = queryTerms.join(" and ");
-
-    const res = await drive.files.list({
-      pageSize: 10,
-      q: query,
-      driveId: DRIVE_ID,
-      corpora: 'drive',
-      includeItemsFromAllDrives: true,
-      supportsAllDrives: true,
-      fields: 'nextPageToken, files(id, name)',
-    });
-    const files = res.data.files;
-    if (files.length === 0) {
-      // create the missing folder
-      let fileMetadata = {
-        name: name,
-        mimeType: mimeType,
-      };
+    try {
+      const drive = google.drive({version: 'v3', auth: this.auth});
+      let queryTerms = [
+        `name = '${name}'`,
+        "trashed = false",
+        `mimeType = '${mimeType}'`,
+      ];
       if (parentId) {
-        fileMetadata.parents = [parentId];
+        queryTerms.push(`'${parentId}' in parents`);
       }
-      const folder = await drive.files.create({
-        requestBody: fileMetadata,
-        fields: 'id',
+      const query = queryTerms.join(" and ");
+  
+      const res = await drive.files.list({
+        pageSize: 10,
+        q: query,
         driveId: DRIVE_ID,
         corpora: 'drive',
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
+        fields: 'nextPageToken, files(id, name)',
       });
-      return folder.data.id;
+      const files = res.data.files;
+      if (files.length === 0) {
+        // create the missing folder
+        let fileMetadata = {
+          name: name,
+          mimeType: mimeType,
+        };
+        if (parentId) {
+          fileMetadata.parents = [parentId];
+        }
+        const folder = await drive.files.create({
+          requestBody: fileMetadata,
+          fields: 'id',
+          driveId: DRIVE_ID,
+          corpora: 'drive',
+          includeItemsFromAllDrives: true,
+          supportsAllDrives: true,
+        });
+        return folder.data.id;
+      }
+      return files[0].id;
+    } catch (err) {
+        console.log(err);
+        throw err;
     }
-    return files[0].id;
   }
 
   async createFile(opts) {
