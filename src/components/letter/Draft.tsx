@@ -185,6 +185,7 @@ export default function Draft(props: Props) {
                     </p>
                     {SHOW_CAPTCHA && (
                         <ReCAPTCHA
+                            id="captcha"
                             sitekey={RECAPTCHA_SITE_KEY}
                             onChange={onCaptcha}
                         />)}

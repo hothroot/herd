@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 /**
  * This test expts to be run against a server with
- * reacptcha disabled (both USE_CAPTCHA and SHOW_CAPTCHA
- * should be false).
+ * reacptcha enabled, but using the public test keys,
+ * see https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do
  */ 
 test('create a letter', async ({ page }) => {
     await page.goto('/letter');
@@ -32,7 +32,7 @@ test('create a letter', async ({ page }) => {
 
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('#submit').click()
+        page.locator('#submit').click(),
     ]);
 
     // be sent to Draft.tsx
@@ -51,12 +51,15 @@ test('create a letter', async ({ page }) => {
     await page.locator('#message').fill(messageText);
     await expect(page.locator('#submit')).toBeDisabled();  // too short
 
+    await page.locator('#captcha').click();
+    await expect(page.locator('#submit')).toBeDisabled();
+    
     await page.locator('#message').fill(messageText + messageText); // 114
     await expect(page.locator('#submit')).toBeEnabled();
 
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('#submit').click()
+        page.locator('#submit').click(),
     ]);
 
     // be sent to Receipt.astro
