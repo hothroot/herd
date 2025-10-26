@@ -31,6 +31,11 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    preview: {
+      allowedHosts: [
+        'devserver-main--herdonthehill.netlify.app', 
+      ],
+    },
   },
   
   prefetch: {
