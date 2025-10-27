@@ -1,6 +1,5 @@
 {
-  "name": "",
-  "type": "module",
+  "name": "herd",
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
@@ -30,7 +29,6 @@
     "axios": "^1.12.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "dotenv": "^17.2.3",
     "embla-carousel-react": "^8.6.0",
     "googleapis": "^150.0.1",
     "lucide-react": "^0.511.0",
@@ -54,6 +52,8 @@
     "@types/pdfkit": "^0.13.9",
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/xml2js": "^0.4.14",
+    "artillery": "^2.0.26",
+    "dotenv": "^17.2.3",
     "sass-embedded": "^1.89.0",
     "tw-animate-css": "^1.3.3",
     "vitest": "^3.2.4"
