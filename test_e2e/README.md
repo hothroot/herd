@@ -26,6 +26,16 @@ I was hoping to use a "preview server" but unlike the "deploy previews" that get
 3. execute the artillery run:
 
 ```
-BASE_URL=https://deploy-preview-52--herdonthehill.netlify.app \
-npx artillery run test_e2e/load_test.ts
+BASE_URL=https://previewhost.netlify.app npx artillery run test_e2e/load_test.ts
 ```
+
+[artillery metrics](https://www.artillery.io/docs/reference/engines/playwright#metrics-reported-by-the-engine):
+- CLS: Cumulative Layout Shift, shift score
+- FCP: First Contentful Paint, milliseconds
+- FID: First Input Delay, milliseconds
+- INP: Interaction to Next Paint, milliseconds
+- LCP: Largest Contentful Paint, milliseconds
+- TTFB: time to firt byte, milliseconds
+- vusers.completed - successful run
+- vusers.failed - test failed at some point
+- vusers.session_length, milliseconds

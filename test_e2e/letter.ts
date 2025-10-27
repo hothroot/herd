@@ -12,19 +12,17 @@ export async function createLetter (page: Page) : Promise<void> {
     await page.locator('input[name="email"]').fill('foo@bar.baz');
 
     await expect(page.getByTestId('address-submit')).toBeEnabled();
-
     await page.getByTestId('address-submit').click();
 
     // see USPS error
-    await expect(page.locator('#usps-error')).toBeVisible();
+    await expect(page.locator('#usps-error')).toBeVisible({ timeout: 10_000 });
 
     // correct the address, expecting pre-filled form for other fields
     await page.locator('input[name="line2"]').fill('Apartment 1211');
-
     await page.getByTestId('address-submit').click();
 
     // be sent to Draft.tsx
-    await expect(page.locator('#message')).toBeVisible();
+    await expect(page.locator('#message')).toBeVisible({ timeout: 10_000 });
     await expect(page).toHaveTitle(/Write your letter/);
     // with cannonicalized address
     const returnAddress = page.locator("#return-address");
@@ -52,7 +50,7 @@ export async function createLetter (page: Page) : Promise<void> {
     await page.getByTestId('draft-submit').click();
 
     // be sent to Receipt.astro
-    await expect(page.getByTestId('letter-list')).toBeVisible();
+    await expect(page.getByTestId('letter-list')).toBeVisible({ timeout: 10_000 });
     await expect(page).toHaveTitle(/Thank you for your letter/);
 
     // look for letter links
