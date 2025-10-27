@@ -189,7 +189,7 @@ export default function Draft(props: Props) {
                             sitekey={RECAPTCHA_SITE_KEY}
                             onChange={onCaptcha}
                         />)}
-                    <Button id="submit" type="submit" disabled={isSubmitting || captchaData === null || messageLength < minMessageLength} className="flex items-center justify-center px-4 py-2">
+                    <Button data-testid="draft-submit" id="submit" type="submit" disabled={isSubmitting || captchaData === null || messageLength < minMessageLength} className="flex items-center justify-center px-4 py-2">
                         {isSubmitting && (
                             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />

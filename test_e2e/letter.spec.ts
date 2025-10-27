@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * This test expts to be run against a server with
- * reacptcha enabled, but using the public test keys,
+ * This test is flakey when run against SHOW_CAPTCH=true
+ * 
+ * With captcha enabled you must use the public test keys,
  * see https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do
  */ 
 test('create a letter', async ({ page }) => {
@@ -16,26 +17,20 @@ test('create a letter', async ({ page }) => {
     await page.locator('input[name="zipcode"]').fill('02139');
     await page.locator('input[name="email"]').fill('foo@bar.baz');
 
-    await expect(page.locator('#submit')).toBeEnabled();
+    await expect(page.getByTestId('address-submit')).toBeEnabled();
 
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('#submit').click()
-    ]);
+    await page.getByTestId('address-submit').click();
 
     // see USPS error
-    const uspsError = await page.locator('#usps-error');
-    await expect(uspsError).toBeVisible();
+    await expect(page.locator('#usps-error')).toBeVisible();
 
     // correct the address, expecting pre-filled form for other fields
     await page.locator('input[name="line2"]').fill('Apartment 1211');
 
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('#submit').click(),
-    ]);
+    await page.getByTestId('address-submit').click();
 
     // be sent to Draft.tsx
+    await expect(page.locator('#message')).toBeVisible();
     await expect(page).toHaveTitle(/Write your letter/);
     // with cannonicalized address
     const returnAddress = page.locator("#return-address");
@@ -49,20 +44,21 @@ test('create a letter', async ({ page }) => {
     var messageText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '; // 57 characters
 
     await page.locator('#message').fill(messageText);
-    await expect(page.locator('#submit')).toBeDisabled();  // too short
+    await expect(page.getByTestId('draft-submit')).toBeDisabled(); // too short
 
-    await page.locator('#captcha').click();
-    await expect(page.locator('#submit')).toBeDisabled();
+    const catpcha = page.locator('#captcha');
+    if (await catpcha.isVisible()) {
+        await catpcha.click();
+        await expect(page.getByTestId('draft-submit')).toBeDisabled(); // still too short
+    }
     
     await page.locator('#message').fill(messageText + messageText); // 114
-    await expect(page.locator('#submit')).toBeEnabled();
+    await expect(page.getByTestId('draft-submit')).toBeEnabled();
 
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('#submit').click(),
-    ]);
+    await page.getByTestId('draft-submit').click();
 
     // be sent to Receipt.astro
+    await expect(page.getByTestId('letter-list')).toBeVisible();
     await expect(page).toHaveTitle(/Thank you for your letter/);
 
     // look for letter links

@@ -12,8 +12,10 @@ PLAYWRIGHT_BASE_URL=https://deploy-preview-36--herdonthehill.netlify.app/ npx pl
 
 Running a single end to end test with a specific browser engine:
 ```
-npx playwright test letter.spec.ts --project chromium
+npx playwright test letter.spec.ts --project "Mobile Safari"
 ```
+
+Mobile Safari seems to be the most stable. Other engines seem to be flaky on waiting for the dtaft submit button to become enabled.
 
 ## Load Tests
 

@@ -23,11 +23,13 @@ const { letters } = Astro.props;
     <a href="https://www.facebook.com/herdonhill/" target="_blank">Follow us on Facebook</a> and tell others to follow us too.
 </p>
 
-<p>
-    You can review your {letters.length == 1 ? "letter" : "letters"} here:
-    <ul>
-        {letters.map((letter: Letter) => <li><a href={letter.url} target="_blank">
-            your letter to Senator {letter.recipient}
-        </a></li>)}
-    </ul>
-</p>
+<div data-testid="letter-list">
+    <p>
+        You can review your {letters.length == 1 ? "letter" : "letters"} here:
+        <ul>
+            {letters.map((letter: Letter) => <li><a href={letter.url} target="_blank">
+                your letter to Senator {letter.recipient}
+            </a></li>)}
+        </ul>
+    </p>
+</div>

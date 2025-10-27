@@ -204,7 +204,7 @@ export default function AddressForm(props: Props) {
             )}
           />
 
-        <Button type="submit" id="submit" disabled={!isValid}>
+        <Button data-testid="address-submit" type="submit" id="submit" disabled={!isValid}>
           {isSubmitting && (
             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
