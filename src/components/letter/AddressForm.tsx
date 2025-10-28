@@ -90,9 +90,9 @@ export default function AddressForm(props: Props) {
 
     { message && 
       <div id="usps-error">
-        <p >The US Postal Service rejected this address with the explaination:</p>
+        <p >The US Postal Service rejected this address query with the explaination:</p>
         <p className="text-red-600">{message}</p>
-        <p>Please correct the address and try again.</p>
+        <p>Please try again after following their recommendation.</p>
       </div>
     }
 
@@ -204,7 +204,7 @@ export default function AddressForm(props: Props) {
             )}
           />
 
-        <Button type="submit" id="submit" disabled={!isValid}>
+        <Button data-testid="address-submit" type="submit" id="submit" disabled={!isValid}>
           {isSubmitting && (
             <svg className={"animate-spin h-4 w-4 text-white"} viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
