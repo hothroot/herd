@@ -95,7 +95,7 @@ export async function validateAddress(address) {
     } catch (error) {
         console.error('Error validating address:', error.message);
         address.status = AddressStatus.ERROR;
-        if (error.code == "429") {
+        if (error.status == 429) {
             address.notes = "The site is experiencing unusually high load, please try again in a few minutes.";
         } else if (error.response && error.response.data && error.response.data.error && error.response.data.error.message) {
             address.notes = error.response.data.error.message;
