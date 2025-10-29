@@ -7,6 +7,7 @@ import { Image } from 'astro:assets'
 import photoData from '@/scripts/photos.js';
 
 import FAQ from '../content/faq.md';
+import '../styles/faq.css';
 
 const photo = "colorado";
 const photos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/*.{jpeg,jpg,png,gif}')
