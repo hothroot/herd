@@ -291,3 +291,11 @@ h2 {
     cursor: pointer;
   }
 }
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/Quicksand-VariableFont_wght.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap; /* Crucial for deferring */
+}

@@ -190,19 +190,6 @@ export default function AddressForm(props: Props) {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="subscribe"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2">
-                <FormLabel>Subscribe to newsletter: </FormLabel>
-                <FormControl>
-                  <Input type="checkbox" className="w-4 h-4" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
         <Button data-testid="address-submit" type="submit" id="submit" disabled={!isValid}>
           {isSubmitting && (
