@@ -42,3 +42,4 @@ A. You should write about what is important to you. Consider the destruction wro
  - Halting renewable energy projects and other climate change initiatives that had already saved billions of dollars and had been helping to blunt the destructive effects of a hotter, drier planet
  - Gutting agencies like FEMA and the National Weather that are critical for responding to emergencies
  - Hiding evidence of Trump’s connections to Jeffrey Epstein
+ 
