@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DonatePost from '../content/donate.md';
+import DonateDisclaim from '../content/donate_disclaimer.md';
 
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets'
@@ -24,17 +25,17 @@ const pageTitle = "Donate";
       />
   </div>
 
-<DonatePost />
+  <DonatePost />
 
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-        <input type="hidden" name="cmd" value="_s-xclick">
-        <input type="hidden" name="hosted_button_id" value="VCLWWSYFMNPM4">
-        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
-               name="submit" alt="PayPal - The safer, easier way to pay online!">
-        <img alt="" src="" data-recalc-dims="1">
-    </form>
+  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+      <input type="hidden" name="cmd" value="_s-xclick">
+      <input type="hidden" name="hosted_button_id" value="VCLWWSYFMNPM4">
+      <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+              name="submit" alt="PayPal - The safer, easier way to pay online!">
+      <img alt="" src="" data-recalc-dims="1">
+  </form>
 
-    <p>
-        Donations are not tax deductible
-    </p>
+
+ <DonateDisclaim />
+
 </BaseLayout>
