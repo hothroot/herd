@@ -1,5 +1,3 @@
-# **Herd on the Hill Terms of Service**
-
 Effective Date: November 4, 2025
 
 Herd on the Hill is a volunteer-run, unincorporated political nonprofit. By accessing or using our website, you agree to comply with and be bound by these Terms of Service. If you do not agree, please do not use our website.
