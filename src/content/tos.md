@@ -1,4 +1,4 @@
-Effective Date: November 4, 2025
+Effective Date: November 16, 2025
 
 Herd on the Hill is a volunteer-run, unincorporated political nonprofit. By accessing or using our website, you agree to comply with and be bound by these Terms of Service. If you do not agree, please do not use our website.
 
@@ -74,4 +74,4 @@ Except as otherwise provided in these Terms, these Terms are intended solely for
 
 ## **14\. Contact Information**
 
-If you have any questions about these Terms, please contact us at [contact@herdonthehill.com](mailto:contact@herdonthehill.com).
+If you have any questions about these Terms, please contact us at [privacy@herdonthehill.com](mailto:privacy@herdonthehill.com).
