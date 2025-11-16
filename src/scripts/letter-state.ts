@@ -11,7 +11,8 @@ export enum FlowStatus {
     CORRECT,
     DRAFT,
     RECEIPT,
-    ERROR
+    ERROR,
+    QUOTA
 };
 export type Address = {   
     name: string;

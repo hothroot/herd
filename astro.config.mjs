@@ -60,6 +60,7 @@ export default defineConfig({
       GTAG: envField.string({ context: "client", access:"public" }),
       USPS_KEY: envField.string({ context: "server", access:"secret" }),
       USPS_SECRET: envField.string({ context: "server", access:"secret" }),
+      MAPS_KEY: envField.string({ context: "server", access:"secret" }),
     }
   },
 
