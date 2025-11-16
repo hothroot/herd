@@ -11,6 +11,7 @@ export class MapsValidator {
   
     async validateAddress(address) {
         try {
+            console.log("using Maps API to validate an address");
             const data = JSON.stringify({
                 address: {
                     regionCode: "US",
@@ -33,7 +34,6 @@ export class MapsValidator {
                 }
             });
             var result = response.data.result;
-            console.log(JSON.stringify(response.data, null, 2));
             var retval = address;
             var zipcode = result.uspsData.standardizedAddress.zipCode;
             if (result.uspsData.standardizedAddress.zipCodeExtension) {
