@@ -10,8 +10,8 @@ export class MapsValidator {
     }
   
     async validateAddress(address) {
+        console.log("using Maps API to validate an address");
         try {
-            console.log("using Maps API to validate an address");
             const data = JSON.stringify({
                 address: {
                     regionCode: "US",
