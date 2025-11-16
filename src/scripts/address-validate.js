@@ -27,7 +27,7 @@ export async function validateAddress(address) {
 
     var result = await validators[0].validateAddress(address);
     if (result.status == AddressStatus.QUOTA || result.status == AddressStatus.ERROR) {
-        result = await validators[0].validateAddress(address);
+        result = await validators[1].validateAddress(address);
     }
     return result;
 }
