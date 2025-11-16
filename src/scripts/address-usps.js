@@ -15,7 +15,6 @@ export class USPSValidator {
   
     async #authenticate() {
         try {
-            console.log("using USPS API to validate an address");
             const data = qs.stringify({
                 grant_type: 'client_credentials',
                 client_id: USPS_KEY,
@@ -37,6 +36,7 @@ export class USPSValidator {
     }
     
     async validateAddress(address) {
+        console.log("using USPS API to validate an address");
         try {
             await this.#authenticate();
             const zipParts = zipRegExp.exec(address.zipcode);
