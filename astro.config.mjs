@@ -61,7 +61,7 @@ export default defineConfig({
       USPS_KEY: envField.string({ context: "server", access:"secret" }),
       USPS_SECRET: envField.string({ context: "server", access:"secret" }),
       MAPS_KEY: envField.string({ context: "server", access:"secret" }),
-      USPS_FIRST: envField.boolean({ context: "server", access:"public", default: true }),
+      VALIDATORS: envField.string({ context: "server", access:"public", default: "usps maps" }),
     }
   },
 

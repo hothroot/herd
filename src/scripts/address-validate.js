@@ -2,7 +2,15 @@ import { USPSValidator } from "@/scripts/address-usps"
 import { MapsValidator } from "@/scripts/address-maps"
 import { AddressStatus } from '@/scripts/letter-state'
 import { allStateNamesAndCodes, zipRegExp } from "@/scripts/states";
-import { USPS_FIRST } from "astro:env/server";
+import { VALIDATORS } from "astro:env/server";
+
+/**
+ * valid anmes for VALIDATORS configuration variable.
+ */
+const validatorByName = {
+    "usps": USPSValidator,
+    "maps": MapsValidator,
+};
 
 export async function validateAddress(address) {
     if (!address.name
@@ -16,18 +24,29 @@ export async function validateAddress(address) {
         address.notes = "Address is missing required information.";
         return address;
     }
-    const usps = new USPSValidator();
-    const maps = new MapsValidator();
-    var validators = [ usps ];
-    if (USPS_FIRST) {
-        validators.push(maps);
-    } else {
-        validators.unshift(maps);
+
+    var result = null;
+    for (var validatorName of VALIDATORS.split(/[, ]+/)) {
+        try {
+            var validator = new validatorByName[validatorName]();
+            result = await validator.validateAddress(address);
+            if (! [AddressStatus.QUOTA, AddressStatus.ERROR].includes(result.status)) {
+                return result;
+            }
+        } catch (error) {
+            if (error instanceof TypeError) {
+                console.error('bad configuration, unknown validator:', validatorName);
+            } else {
+                console.warn('validation failed, trying next validator', error);
+            }
+        }
     }
 
-    var result = await validators[0].validateAddress(address);
-    if (result.status == AddressStatus.QUOTA || result.status == AddressStatus.ERROR) {
-        result = await validators[1].validateAddress(address);
+    if (result === null) {
+        // otherwise return the final error from the validators
+        address.status = AddressStatus.ERROR;
+        address.notes = "There has been a technical error, please try back later.";
     }
+
     return result;
 }
