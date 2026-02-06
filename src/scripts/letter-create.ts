@@ -38,7 +38,7 @@ export async function createLetters(
         console.log("letter failed due to missing captcha");
     } else if (useCaptcha && !captchaIsValid) {
         console.log("letter failed due to invalid captcha");
-    } else if (message.length < minMessageLength || message.length > maxMessageLength) {
+    } else if (message.length < minMessageLength || message.length > (maxMessageLength + 5)) {
         console.log("letter failed due to invalid message length");
     } else {
         const address = envelope!.address;
