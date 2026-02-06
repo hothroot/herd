@@ -18,7 +18,7 @@ export async function createLetter (page: Page) : Promise<void> {
     await expect(page.locator('#usps-error')).toBeVisible({ timeout: 10_000 });
 
     // correct the address, expecting pre-filled form for other fields
-    await page.locator('input[name="line2"]').fill('Apartment 1211');
+    await page.locator('input[name="line2"]').fill('Apartment 100-1712');
     await page.getByTestId('address-submit').click();
 
     // be sent to Draft.tsx
@@ -28,21 +28,20 @@ export async function createLetter (page: Page) : Promise<void> {
     const returnAddress = page.locator("#return-address");
     await expect(returnAddress).toContainText(/John Doe/);
     await expect(returnAddress).toContainText(/100 LANDSDOWNE ST/);
-    await expect(returnAddress).toContainText(/APT 1211/);
+    await expect(returnAddress).toContainText(/100-1712/);
     await expect(returnAddress).toContainText(/CAMBRIDGE/);
     await expect(returnAddress).toContainText(/MA/);
-    await expect(returnAddress).toContainText(/02139-4227/);
+    await expect(returnAddress).toContainText(/02139-4203/);
 
     var messageText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '; // 57 characters
 
     await page.locator('#message').fill(messageText);
     await expect(page.getByTestId('draft-submit')).toBeDisabled(); // too short
 
-    const catpcha = page.locator('#captcha');
-    if (await catpcha.isVisible()) {
-        await catpcha.click();
-        await expect(page.getByTestId('draft-submit')).toBeDisabled(); // still too short
-    }
+    const catpcha_frame = page.frameLocator("iframe[title='reCAPTCHA']");
+    const catpcha_label = catpcha_frame.locator("#recaptcha-anchor-label");
+    await expect(catpcha_label).toHaveText("I'm not a robot");
+    await catpcha_frame.locator('.recaptcha-checkbox').click();
     
     await page.locator('#message').fill(messageText + messageText); // 114
     await expect(page.getByTestId('draft-submit')).toBeEnabled();
